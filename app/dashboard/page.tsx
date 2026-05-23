@@ -8,6 +8,7 @@ import {
   Clock, CheckCircle2, Circle, AlertCircle, X, ZoomIn
 } from 'lucide-react'
 import Link from 'next/link'
+import { registerPushNotifications } from '@/utils/notifications/pushRegister'
 
 interface Transaction {
   id: string
@@ -133,6 +134,7 @@ export default function Dashboard() {
   useEffect(() => {
     setSelectedDate(new Date().toISOString().split('T')[0])
     fetchData()
+    registerPushNotifications() // Request Web Push notification permission on mount
 
     const channel1 = supabase
       .channel('dashboard-transactions-realtime')

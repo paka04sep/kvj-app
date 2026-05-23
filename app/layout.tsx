@@ -4,6 +4,8 @@ import BottomNav from '@/components/BottomNav'
 import DesktopHeader from '@/components/DesktopHeader'
 import QuickTransactionModal from '@/components/QuickTransactionModal'
 import ScanSlipModal from '@/components/ScanSlipModal'
+import { NotificationProvider } from '@/components/NotificationContext'
+import NotificationToastContainer from '@/components/NotificationToastContainer'
 import './globals.css'
 
 const prompt = Prompt({
@@ -58,22 +60,25 @@ export default function RootLayout({
         />
       </head>
       <body className="theme-transition flex h-screen h-[100dvh] flex-col items-center justify-center overflow-hidden bg-[var(--color-bg-app)] font-sans text-[var(--color-text-primary)] selection:bg-emerald-500/20 selection:text-emerald-400">
-        <div className="pointer-events-none fixed inset-0 -z-10 bg-[radial-gradient(ellipse_at_top,_var(--bg-glow-stops))] transition-all duration-350" />
+        <NotificationProvider>
+          <div className="pointer-events-none fixed inset-0 -z-10 bg-[radial-gradient(ellipse_at_top,_var(--bg-glow-stops))] transition-all duration-350" />
 
-        <div className="relative flex h-full w-full max-w-md flex-col overflow-hidden border-x border-zinc-800/50 bg-zinc-900/40 pb-20 shadow-[0_0_50px_rgba(0,0,0,0.8)] backdrop-blur-md transition-all duration-300 md:h-screen md:w-screen md:max-w-none md:border-none md:pb-0 md:shadow-none">
-          <DesktopHeader />
+          <div className="relative flex h-full w-full max-w-md flex-col overflow-hidden border-x border-zinc-800/50 bg-zinc-900/40 pb-20 shadow-[0_0_50px_rgba(0,0,0,0.8)] backdrop-blur-md transition-all duration-300 md:h-screen md:w-screen md:max-w-none md:border-none md:pb-0 md:shadow-none">
+            <DesktopHeader />
 
-          <main className="flex h-full w-full flex-1 flex-col overflow-y-auto p-4 sm:p-5 md:p-8">
-            {children}
-          </main>
+            <main className="flex h-full w-full flex-1 flex-col overflow-y-auto p-4 sm:p-5 md:p-8">
+              {children}
+            </main>
 
-          <div className="md:hidden">
-            <BottomNav />
+            <div className="md:hidden">
+              <BottomNav />
+            </div>
           </div>
-        </div>
 
-        <QuickTransactionModal />
-        <ScanSlipModal />
+          <QuickTransactionModal />
+          <ScanSlipModal />
+          <NotificationToastContainer />
+        </NotificationProvider>
 
         <script
           dangerouslySetInnerHTML={{

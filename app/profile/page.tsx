@@ -6,10 +6,11 @@ import { createClient } from '@/utils/supabase/client'
 import { createBrowserClient } from '@supabase/ssr'
 import { 
   User, Lock, Key, AlertCircle, CheckCircle, Shield, 
-  LogOut, Edit2, ShieldAlert, Plus, Camera, Palette, Upload, X
+  LogOut, Edit2, ShieldAlert, Plus, Camera, Palette, Upload, X, Bell
 } from 'lucide-react'
 import ThemeToggle from '@/components/ThemeToggle'
 import confetti from 'canvas-confetti'
+import { registerPushNotifications } from '@/utils/notifications/pushRegister'
 
 interface Profile {
   id: string
@@ -481,6 +482,27 @@ export default function ProfilePage() {
 
             {/* Theme Switch Panel */}
             <ThemeToggle variant="card" />
+
+            {/* Push Notification Enable Card */}
+            <button
+              onClick={async () => {
+                await registerPushNotifications();
+                if (Notification.permission === 'granted') {
+                  setPwSuccess('เปิดสิทธิ์การแจ้งเตือนสั่นและเด้งนอกแอปเรียบร้อยแล้ว! 🎉 คุณจะได้รับข้อความเด้งเตือนแม้ว่าจะปิดแอปไปแล้ว');
+                  confetti({
+                    particleCount: 50,
+                    spread: 40,
+                    origin: { y: 0.8 }
+                  });
+                } else {
+                  setPwError('กรุณากดยอมรับสิทธิ์แจ้งเตือนบนเบราว์เซอร์ของคุณเมื่อระบบถาม เพื่อเปิดระบบเด้งเตือนนอกแอป');
+                }
+              }}
+              className="w-full py-3.5 rounded-2xl bg-emerald-500/10 hover:bg-emerald-500/15 border border-emerald-500/20 hover:border-emerald-500/30 text-emerald-400 text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer select-none"
+            >
+              <Bell size={14} className="text-emerald-450 animate-pulse" />
+              เปิดรับแจ้งเตือนนอกแอป (สั่น/เด้งเตือน) 🔔
+            </button>
 
             {/* Logout Section */}
             <button
