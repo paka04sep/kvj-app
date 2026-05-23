@@ -51,6 +51,7 @@ const filters = [
 export default function TransactionsPage() {
   const [loading, setLoading] = useState(true)
   const [currentUserId, setCurrentUserId] = useState<string | null>(null)
+  const [currentUserRole, setCurrentUserRole] = useState<string | null>(null)
   const [transactions, setTransactions] = useState<Transaction[]>([])
   const [refreshing, setRefreshing] = useState(false)
   const [searchText, setSearchText] = useState('')
@@ -81,6 +82,11 @@ export default function TransactionsPage() {
       profilesData?.forEach((profile) => {
         profileMap[profile.id] = profile
       })
+
+      const myProfile = profilesData?.find((p) => p.id === user.id)
+      if (myProfile) {
+        setCurrentUserRole(myProfile.role)
+      }
 
       const { data: transData } = await supabase
         .from('transactions')
@@ -127,6 +133,10 @@ export default function TransactionsPage() {
 
   const handleDelete = async (id: string, e: React.MouseEvent) => {
     e.stopPropagation()
+    if (currentUserRole !== 'admin') {
+      alert('เฉพาะแอดมินเท่านั้นที่มีสิทธิ์ลบรายการได้ครับ 🔒')
+      return
+    }
     if (!confirm('ยืนยันการลบรายการนี้ออกจากประวัติครอบครัว?')) return
 
     try {
@@ -227,7 +237,7 @@ export default function TransactionsPage() {
           <span className="block text-xs font-semibold uppercase tracking-wider text-emerald-400">
             คลังข้อมูลครอบครัว
           </span>
-          <h2 className="mt-0.5 flex items-center gap-2 text-xl font-bold tracking-tight text-white">
+          <h2 className="mt-0.5 flex items-center gap-2 text-xl font-bold tracking-tight text-[var(--text-main)]">
             ประวัติธุรกรรมย้อนหลัง
             {refreshing && <RefreshCw className="h-3.5 w-3.5 animate-spin text-zinc-500" />}
           </h2>
@@ -239,10 +249,10 @@ export default function TransactionsPage() {
           <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500" />
           <input
             type="text"
-            placeholder="ค้นหาบิล หมวดหมู่ หรือคนลงรายการ เช่น ค่าไฟ, พ่อ, กับข้าว"
+            placeholder="ค้นหาบิล หมวดหมู่ หรือคนลงรายการ เช่น ค่าไฟ, แม่"
             value={searchText}
             onChange={(e) => setSearchText(e.target.value)}
-            className="app-field w-full rounded-2xl py-3 pl-11 pr-10 text-sm font-bold"
+            className="app-field w-full rounded-2xl py-3 pl-11 pr-10 text-[11px]"
           />
           {searchText && (
             <button
@@ -398,7 +408,7 @@ export default function TransactionsPage() {
                             })}
                           </span>
 
-                          {transaction.user_id === currentUserId ? (
+                          {currentUserRole === 'admin' ? (
                             <button
                               type="button"
                               onClick={(e) => handleDelete(transaction.id, e)}
@@ -490,7 +500,7 @@ export default function TransactionsPage() {
               )}
             </div>
 
-            {selectedTx.user_id === currentUserId && (
+            {currentUserRole === 'admin' && (
               <div className="mt-5 border-t border-zinc-800/60 pt-4">
                 <button
                   type="button"

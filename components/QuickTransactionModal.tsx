@@ -9,8 +9,6 @@ import {
   CheckCircle,
   FileText,
   Image as ImageIcon,
-  Minus,
-  Plus,
   Tag,
   Upload,
   X,
@@ -41,15 +39,10 @@ export default function QuickTransactionModal() {
   const supabase = createClient()
   const amountInputRef = useRef<HTMLInputElement>(null)
 
-  const defaultIncomeCategories = ['รายได้รายวัน', 'เงินเดือน', 'รายได้เสริม', 'อื่นๆ']
+  const defaultIncomeCategories = ['รายได้รายวัน', 'รายได้เสริม', 'อื่นๆ']
   const defaultExpenseCategories = [
-    'อาหาร',
-    'ค่าไฟ',
-    'ค่าน้ำ',
-    'ค่าเน็ต',
-    'ค่าเดินทาง',
-    'ค่ารักษาพยาบาล',
-    'หนี้สิน/เงินกู้',
+    'ค่าข้าว',
+    'ค่าไปโรงเรียนน้อง',
     'อื่นๆ',
   ]
 
@@ -82,7 +75,24 @@ export default function QuickTransactionModal() {
 
       setActiveTab(initialType)
       setDate(new Date().toISOString().split('T')[0])
-      setDescription(initialType === 'income' ? 'วันนี้มีรายรับเข้าบ้าน' : '')
+
+      const initialCategories = initialType === 'income' ? incomeCats : expenseCats
+      const initialCategory = initialCategories[0] || ''
+      setCategory(initialCategory)
+
+      const defaultDescriptions: Record<string, string> = {
+        'รายได้รายวัน': 'วันนี้มีรายได้รายวันเข้าบ้าน',
+        'รายได้เสริม': 'วันนี้มีรายได้เสริมเข้าบ้าน',
+        'อื่นๆ_income': 'รายรับของครอบครัว',
+        'ค่าข้าว': 'จ่ายค่าข้าว',
+        'ค่าไปโรงเรียนน้อง': 'ให้เงินน้องไปโรงเรียน',
+        'อื่นๆ_expense': 'รายจ่ายของครอบครัว',
+      }
+
+      const key = initialCategory === 'อื่นๆ' ? `${initialCategory}_${initialType}` : initialCategory
+      const initialDesc = defaultDescriptions[key] || (initialType === 'income' ? 'รายรับของครอบครัว' : 'รายจ่ายของครอบครัว')
+      setDescription(initialDesc)
+
       setIsOpen(true)
       setErrorMsg(null)
       setSuccessMsg(null)
@@ -100,9 +110,40 @@ export default function QuickTransactionModal() {
 
   useEffect(() => {
     setCategory(activeCategories[0] || '')
-    setDescription(activeTab === 'income' ? 'วันนี้มีรายรับเข้าบ้าน' : '')
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab, customCategories])
+
+  // Smart auto-filled descriptions based on selected category
+  useEffect(() => {
+    if (!category) return
+
+    const defaultDescriptions: Record<string, string> = {
+      'รายได้รายวัน': 'วันนี้มีรายได้รายวันเข้าบ้าน',
+      'รายได้เสริม': 'วันนี้มีรายได้เสริมเข้าบ้าน',
+      'อื่นๆ_income': 'รายรับของครอบครัว',
+      'ค่าข้าว': 'จ่ายค่าข้าว',
+      'ค่าไปโรงเรียนน้อง': 'ให้เงินน้องไปโรงเรียน',
+      'อื่นๆ_expense': 'รายจ่ายของครอบครัว',
+    }
+
+    const key = category === 'อื่นๆ' ? `${category}_${activeTab}` : category
+    const defaultDesc = defaultDescriptions[key] || (activeTab === 'income' ? 'รายรับของครอบครัว' : 'รายจ่ายของครอบครัว')
+
+    // List of all default descriptions to check if current desc is custom or not
+    const allDefaults = [
+      '',
+      'วันนี้มีรายรับเข้าบ้าน',
+      'รายรับของครอบครัว',
+      'รายจ่ายของครอบครัว',
+      ...Object.values(defaultDescriptions)
+    ]
+
+    // If description is empty or matches a default pattern, auto-fill/update it
+    if (allDefaults.includes(description.trim())) {
+      setDescription(defaultDesc)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [category, activeTab])
 
   useEffect(() => {
     document.body.style.overflow = isOpen ? 'hidden' : ''
@@ -267,9 +308,11 @@ export default function QuickTransactionModal() {
 
         <div className="flex shrink-0 items-center justify-between border-b border-zinc-800/55 px-5 py-4">
           <div>
-            <h3 className="text-sm font-black tracking-wide text-zinc-100">เพิ่มรายการ</h3>
+            <h3 className="text-sm font-black tracking-wide text-zinc-100">
+              {activeTab === 'income' ? 'เพิ่มรายรับ' : 'เพิ่มรายจ่าย'}
+            </h3>
             <p className="mt-0.5 text-[10px] font-semibold text-zinc-500">
-              บันทึกรายรับรายจ่ายของบ้านให้เร็วและชัดเจน
+              {activeTab === 'income' ? 'บันทึกเงินเข้าของบ้านให้เร็วและชัดเจน' : 'บันทึกเงินออกของบ้านให้เร็วและชัดเจน'}
             </p>
           </div>
           <button
@@ -297,27 +340,20 @@ export default function QuickTransactionModal() {
             </div>
           )}
 
-          <div className="grid w-full grid-cols-2 rounded-2xl app-surface-soft p-1">
-            <button
-              type="button"
-              onClick={() => setActiveTab('expense')}
-              className={`flex cursor-pointer items-center justify-center gap-1.5 rounded-xl py-2.5 text-xs font-black transition-all ${
-                activeTab === 'expense' ? 'tone-expense shadow-sm' : 'text-zinc-500 hover:text-zinc-200'
-              }`}
-            >
-              <Minus size={14} className="stroke-[2.7px]" />
-              รายจ่าย
-            </button>
-            <button
-              type="button"
-              onClick={() => setActiveTab('income')}
-              className={`flex cursor-pointer items-center justify-center gap-1.5 rounded-xl py-2.5 text-xs font-black transition-all ${
-                activeTab === 'income' ? 'tone-income shadow-sm' : 'text-zinc-500 hover:text-zinc-200'
-              }`}
-            >
-              <Plus size={14} className="stroke-[2.7px]" />
-              รายรับ
-            </button>
+          <div className={`flex items-center justify-between rounded-2xl border px-4 py-3 ${
+            activeTab === 'income' ? 'tone-income' : 'tone-expense'
+          }`}>
+            <div>
+              <p className="text-[10px] font-black uppercase tracking-wider opacity-70">
+                ประเภทที่เลือก
+              </p>
+              <p className="mt-0.5 text-sm font-black">
+                {activeTab === 'income' ? 'รายรับ' : 'รายจ่าย'}
+              </p>
+            </div>
+            <span className="rounded-full bg-white/10 px-3 py-1 text-[10px] font-black">
+              {activeTab === 'income' ? 'เงินเข้า' : 'เงินออก'}
+            </span>
           </div>
 
           <div className="rounded-2xl app-surface-soft px-4 py-4 text-center">
@@ -375,7 +411,7 @@ export default function QuickTransactionModal() {
                 required
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
-                className="app-field w-full cursor-pointer rounded-xl px-3 py-2.5 text-sm font-semibold"
+                className="app-field w-full max-w-36 cursor-pointer rounded-xl px-3 py-2.5 text-sm font-semibold"
                 disabled={loading}
               />
             </div>
@@ -388,7 +424,6 @@ export default function QuickTransactionModal() {
             </label>
             <input
               type="text"
-              required
               placeholder={activeTab === 'income' ? 'เช่น เงินเดือน, รายได้เสริม' : 'เช่น ค่ากับข้าว, ค่าไฟ'}
               value={description}
               onChange={(e) => setDescription(e.target.value)}

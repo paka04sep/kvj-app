@@ -313,7 +313,7 @@ export default function ProfilePage() {
         <span className="text-xs font-semibold text-emerald-400 tracking-wider uppercase block">
           โปรไฟล์ครอบครัว
         </span>
-        <h2 className="text-xl font-bold tracking-tight text-white mt-0.5">
+        <h2 className="text-xl font-bold tracking-tight text-[var(--text-main)] mt-0.5">
           ตั้งค่าบัญชี & การใช้งาน 👤
         </h2>
       </div>
@@ -376,7 +376,7 @@ export default function ProfilePage() {
                   </form>
                 ) : (
                   <div className="flex items-center gap-2">
-                    <h3 className="text-lg font-bold text-white truncate">{profile.display_name}</h3>
+                    <h3 className="text-lg font-bold text-[var(--text-main)] truncate">{profile.display_name}</h3>
                     <button 
                       onClick={() => setEditingName(true)}
                       className="p-1 text-zinc-400 hover:text-emerald-400 rounded transition-colors"
@@ -449,7 +449,7 @@ export default function ProfilePage() {
                   }`}
                 >
                   <Shield size={14} />
-                  แดชบอร์ดดูแลครอบครัว (Admin)
+                 สร้างบัญชีครอบครัว
                 </button>
               )}
             </div>
@@ -492,7 +492,7 @@ export default function ProfilePage() {
               <div className="space-y-3.5 p-5 rounded-2xl bg-zinc-950/40 border border-zinc-850">
                 <div className="grid grid-cols-2 py-2.5 border-b border-zinc-900/60 text-xs">
                   <span className="text-zinc-500 font-medium">ชื่อแสดงผล:</span>
-                  <span className="text-white font-bold text-right truncate">{profile?.display_name}</span>
+                  <span className="text-[var(--text-main)] font-bold text-right truncate">{profile?.display_name}</span>
                 </div>
                 <div className="grid grid-cols-2 py-2.5 border-b border-zinc-900/60 text-xs">
                   <span className="text-zinc-500 font-medium">สิทธิ์การใช้งาน:</span>
@@ -612,7 +612,7 @@ export default function ProfilePage() {
             <div className="flex justify-between items-center mb-4 select-none">
               <h3 className="text-xs font-bold text-zinc-300 tracking-wider uppercase flex items-center gap-2">
                 <Shield size={14} className="text-emerald-400" />
-                แดชบอร์ดดูแลครอบครัว (Admin) 🛡️
+              สร้างบัญชีครอบครัว
               </h3>
               <button
                 onClick={() => setActiveSection('profile')}
@@ -730,14 +730,6 @@ export default function ProfilePage() {
                 </button>
               </div>
             </form>
-
-            {/* Informational Warning */}
-            <div className="p-3 rounded-xl bg-zinc-955 border border-zinc-900 text-zinc-550 text-[9px] leading-relaxed flex gap-2 mt-3.5">
-              <ShieldAlert size={14} className="text-zinc-650 shrink-0 mt-0.5" />
-              <span>
-                บัญชีผู้ใช้ใหม่จะเข้าใช้งานได้โดยอัตโนมัติ สมาชิกสามารถล็อกอินเข้าแอปด้วย Username ดังกล่าวเพื่อบันทึกประวัติการเงินได้ทันที
-              </span>
-            </div>
           </div>
         </div>
       )}

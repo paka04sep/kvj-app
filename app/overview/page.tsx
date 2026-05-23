@@ -476,7 +476,7 @@ export default function OverviewPage() {
 
     try {
       // 1. Log transaction as expense with auto-matching category
-      let categoryMatch = '❓ อื่นๆ'
+      let categoryMatch = 'จ่ายบิล'
       const name = ob.name
       if (name.includes('ไฟ')) categoryMatch = '🔌 ค่าไฟ'
       else if (name.includes('น้ำ')) categoryMatch = '💧 ค่าน้ำ'
@@ -715,14 +715,14 @@ export default function OverviewPage() {
           <span className="text-xs font-semibold text-emerald-400 tracking-wider uppercase block">
             สถิติมุมมองระดับเดือน
           </span>
-          <h2 className="text-xl font-bold tracking-tight text-white mt-0.5 flex items-center gap-2 select-none">
+          <h2 className="text-xl font-bold tracking-tight text-[var(--text-main)] mt-0.5 flex items-center gap-2 select-none">
             ภาพรวมการเงินครอบครัว 📊
             {refreshing && <RefreshCw size={14} className="animate-spin text-zinc-500" />}
           </h2>
         </div>
 
         {/* Dropdown selector for YYYY-MM comparison */}
-        <div className="relative">
+        <div className="relative w-fit">
           <Calendar className="absolute left-3.5 top-1/2 -translate-y-1/2 text-emerald-400 pointer-events-none" size={14} />
           <select
             value={selectedMonth}
@@ -735,7 +735,7 @@ export default function OverviewPage() {
               </option>
             ))}
           </select>
-          <ChevronDown className="absolute right-3.5 top-1/2 -translate-y-1/2 text-zinc-550 pointer-events-none" size={13} />
+          <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-550 pointer-events-none" size={13} />
         </div>
       </div>
 
@@ -800,7 +800,7 @@ export default function OverviewPage() {
                   </div>
                   <div>
                     <span className="text-[10px] text-zinc-500 font-bold block select-none">รายจ่ายทั้งหมด</span>
-                    <span className="text-lg font-black text-white tracking-tight mt-0.5 block truncate">
+                    <span className="text-lg font-black amount-expense tracking-tight mt-0.5 block truncate">
                       ฿{totalExpense.toLocaleString(undefined, { minimumFractionDigits: 2 })}
                     </span>
                   </div>
@@ -815,7 +815,7 @@ export default function OverviewPage() {
                     </div>
                   </div>
                   <div>
-                    <span className="text-lg font-black text-white tracking-tight block truncate">
+                    <span className="text-lg font-black text-[var(--text-main)] tracking-tight block truncate">
                       ฿{currentSavings.toLocaleString(undefined, { minimumFractionDigits: 2 })}
                     </span>
                     <span className={`text-[8.5px] font-black px-2 py-0.5 rounded-md inline-block mt-2 border select-none ${
@@ -1064,7 +1064,7 @@ export default function OverviewPage() {
                 </div>
                 <div>
                   <span className="text-[10px] text-zinc-500 font-bold block select-none">ยอดค้างจ่าย</span>
-                  <span className="text-lg font-black text-white tracking-tight mt-0.5 block truncate">
+                  <span className="text-lg font-black amount-expense tracking-tight mt-0.5 block truncate">
                     ฿{unpaidObligationsAmount.toLocaleString(undefined, { minimumFractionDigits: 2 })}
                   </span>
                 </div>
@@ -1279,7 +1279,7 @@ export default function OverviewPage() {
                             className="px-3.5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 active:scale-97 text-black text-[10px] font-black flex items-center gap-1 shadow-md hover:scale-103 transition-all cursor-pointer shrink-0"
                           >
                             <Check size={11} className="stroke-[3.5px]" />
-                            ✓ จ่ายบิลนี้
+                            จ่ายบิลนี้
                           </button>
                         )}
                       </div>
@@ -1362,7 +1362,7 @@ export default function OverviewPage() {
                   className="w-4 h-4 rounded border-zinc-700 bg-zinc-950 text-emerald-500 focus:ring-emerald-500"
                 />
                 <label htmlFor="add-recur" className="text-[10px] font-bold text-zinc-400 cursor-pointer select-none">
-                  ☑ ทำซ้ำรายการนี้ทุกเดือน (เป็นบิลคงที่รายเดือน)
+                  ทำซ้ำรายการนี้ทุกเดือน (เป็นบิลคงที่รายเดือน)
                 </label>
               </div>
 
@@ -1448,7 +1448,7 @@ export default function OverviewPage() {
                   className="w-4 h-4 rounded border-zinc-700 bg-zinc-950 text-emerald-500 focus:ring-emerald-500"
                 />
                 <label htmlFor="edit-recur" className="text-[10px] font-bold text-zinc-400 cursor-pointer select-none">
-                  ☑ ทำซ้ำรายการนี้ทุกเดือน (เป็นบิลคงที่รายเดือน)
+                  ทำซ้ำรายการนี้ทุกเดือน (เป็นบิลคงที่รายเดือน)
                 </label>
               </div>
 

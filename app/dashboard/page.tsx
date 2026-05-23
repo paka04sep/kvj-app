@@ -191,7 +191,7 @@ export default function Dashboard() {
     return (
       <div className="flex-grow flex flex-col items-center justify-center py-20 text-zinc-400">
         <div className="w-8 h-8 border-2 border-emerald-500/20 border-t-emerald-500 rounded-full animate-spin mb-4" />
-        <p className="text-sm">กำลังเปิดระบบ Command Center 🏠</p>
+        <p className="text-sm">กำลังเปิดข้อมูลรายรับรายจ่าย 🏠</p>
       </div>
     )
   }
@@ -210,70 +210,77 @@ export default function Dashboard() {
             </span>
           </div>
           {/* Greeting */}
-          <h2 className="text-2xl font-black tracking-tight text-white flex items-center gap-1.5">
+          <h2 className="text-2xl font-black tracking-tight text-[var(--text-main)] flex items-center gap-1.5">
             สวัสดี &quot;{profile?.display_name || 'สมาชิกในบ้าน'}&quot; 👋
             {refreshing && <RefreshCw size={14} className="animate-spin text-zinc-500" />}
           </h2>
         </div>
 
-        {/* Date Selector Driller */}
-        <div className="flex items-center gap-2 select-none">
+        {/* Date Selector Driller (Date Left, Link Right) */}
+        <div className="flex items-center justify-between w-full select-none gap-3">
+          <div className="flex flex-col gap-1 select-none">
+            <div className="relative">
+              <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 text-emerald-400 pointer-events-none" size={14} />
+              <input 
+                type="date" 
+                value={selectedDate}
+                onChange={(e) => setSelectedDate(e.target.value)}
+                className="app-field text-xs font-extrabold rounded-xl py-2.5 pl-9 pr-3.5 transition-all cursor-pointer w-[175px]"
+              />
+            </div>
+            {selectedDate !== new Date().toISOString().split('T')[0] && (
+              <button 
+                onClick={handleResetToToday}
+                className="text-[9.5px] bg-zinc-800 hover:bg-zinc-700 text-zinc-300 font-black px-2.5 py-1.5 rounded-lg border border-zinc-750 transition-colors cursor-pointer text-left w-fit shadow-sm animate-fade-in"
+              >
+                กลับมาวันนี้
+              </button>
+            )}
+          </div>
+
           <Link 
             href="/overview?tab=obligations" 
-            className="flex items-center gap-1.5 text-[10px] font-black app-field hover:text-emerald-400 rounded-xl px-3 py-2.5 transition-colors cursor-pointer"
+            className="relative flex items-center gap-1.5 bg-gradient-to-r from-rose-500 to-red-600 text-white text-[10.5px] font-black pl-3 pr-2 py-1.5 rounded-full shadow-lg border-l border-y border-rose-400/30 hover:pl-3.5 transition-all duration-200 select-none shrink-0  group"
           >
-            <span>📝 ภาระบิลบ้าน</span>
+            <span className="relative flex h-1.5 w-1.5">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-white"></span>
+            </span>
+            <span>รายจ่ายประจำเดือน 🔔</span>
           </Link>
-          <div className="relative">
-            <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 text-emerald-400 pointer-events-none" size={14} />
-            <input 
-              type="date" 
-              value={selectedDate}
-              onChange={(e) => setSelectedDate(e.target.value)}
-              className="app-field text-xs font-extrabold rounded-xl py-2.5 pl-9 pr-3.5 transition-all cursor-pointer"
-            />
-          </div>
-          {selectedDate !== new Date().toISOString().split('T')[0] && (
-            <button 
-              onClick={handleResetToToday}
-              className="text-[10px] bg-zinc-800 hover:bg-zinc-700 text-zinc-300 font-extrabold px-3 py-2.5 rounded-xl border border-zinc-750 transition-colors"
-            >
-              กลับมาวันนี้
-            </button>
-          )}
         </div>
       </div>
 
       {/* 2. Responsive Layout: Side by Side on Desktop, Single Column on Mobile */}
-      <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-5 overflow-hidden min-h-0">
+      <div className="flex-1 flex flex-col lg:grid lg:grid-cols-12 gap-4 lg:gap-5 lg:overflow-hidden overflow-hidden min-h-0">
         
         {/* LEFT COLUMN: Summary KPIs, Obligations Card & Banners (5 cols on Desktop) */}
-        <div className="lg:col-span-5 flex flex-col space-y-4 overflow-y-auto pr-1">
+        <div className="lg:col-span-5 flex flex-col space-y-2.5 lg:space-y-4 shrink-0 lg:overflow-y-auto lg:pr-1 overflow-visible">
           
           {/* Daily KPI Summary for Selected Day */}
-          <div className="grid grid-cols-2 gap-3.5 shrink-0">
+          <div className="grid grid-cols-2 gap-2.5 lg:gap-3.5 shrink-0">
             {/* Income */}
-            <div className="glass-card rounded-2xl p-4 border border-zinc-850 flex flex-col justify-between shadow-lg relative overflow-hidden group hover:border-emerald-500/20 transition-all duration-300">
-              <div className="flex justify-between items-center mb-1 select-none">
+            <div className="glass-card rounded-2xl py-2.5 px-3.5 lg:p-4 border border-zinc-850 flex flex-col justify-between shadow-lg relative overflow-hidden group hover:border-emerald-500/20 transition-all duration-300">
+              <div className="flex justify-between items-center mb-0.5 lg:mb-1 select-none">
                 <span className="text-[9px] font-black text-zinc-400 tracking-wider uppercase">รายรับวันนี้</span>
                 <span className="text-[8px] bg-emerald-500/10 text-emerald-400 font-extrabold px-2 py-0.5 rounded-full border border-emerald-500/5">
                   +{selectedDayTransactions.filter(t => t.type === 'income').length} รายการ
                 </span>
               </div>
-              <span className="text-lg font-black text-emerald-400 tracking-tight block">
+              <span className="text-base lg:text-lg font-black text-emerald-400 tracking-tight block">
                 ฿{selectedDayIncome.toLocaleString(undefined, { minimumFractionDigits: 2 })}
               </span>
             </div>
 
             {/* Expense */}
-            <div className="glass-card rounded-2xl p-4 border border-zinc-850 flex flex-col justify-between shadow-lg relative overflow-hidden group hover:border-rose-500/20 transition-all duration-300">
-              <div className="flex justify-between items-center mb-1 select-none">
+            <div className="glass-card rounded-2xl py-2.5 px-3.5 lg:p-4 border border-zinc-850 flex flex-col justify-between shadow-lg relative overflow-hidden group hover:border-rose-500/20 transition-all duration-300">
+              <div className="flex justify-between items-center mb-0.5 lg:mb-1 select-none">
                 <span className="text-[9px] font-black text-zinc-400 tracking-wider uppercase">รายจ่ายวันนี้</span>
                 <span className="text-[8px] bg-rose-500/10 text-rose-400 font-extrabold px-2 py-0.5 rounded-full border border-rose-500/5">
                   -{selectedDayTransactions.filter(t => t.type === 'expense').length} รายการ
                 </span>
               </div>
-              <span className="text-lg font-black amount-expense tracking-tight block">
+              <span className="text-base lg:text-lg font-black amount-expense tracking-tight block">
                 ฿{selectedDayExpense.toLocaleString(undefined, { minimumFractionDigits: 2 })}
               </span>
             </div>
@@ -282,24 +289,24 @@ export default function Dashboard() {
           {/* Father's Encouraging banner */}
           <div className="shrink-0">
             {targetFatherIncome > 0 ? (
-              <div className="p-4 rounded-2xl bg-gradient-to-r from-emerald-500/10 via-teal-500/5 to-transparent border border-emerald-500/20 text-emerald-400 text-xs flex items-center justify-between shadow-inner animate-pulse-slow">
+              <div className="p-3.5 lg:p-4 rounded-2xl father-income-banner text-xs flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
                   <span className="text-lg">💼</span>
                   <div>
-                    <span className="font-extrabold block text-emerald-350">วันนี้พ่อหาเงินได้ยอดเยี่ยม!</span>
-                    <span className="text-[10px] text-zinc-400">รายได้วันนี้สะสมเข้าบ้าน: <strong className="text-emerald-400 font-black">+฿{targetFatherIncome.toLocaleString()}</strong> บาท</span>
+                    <span className="font-extrabold block banner-title">วันนี้พ่อหาเงินได้ยอดเยี่ยม!</span>
+                    <span className="text-[10px] banner-desc">รายได้วันนี้สะสมเข้าบ้าน: <strong className="banner-amount font-black">+฿{targetFatherIncome.toLocaleString()}</strong> บาท</span>
                   </div>
                 </div>
-                <span className="text-[9px] bg-emerald-500/20 text-emerald-300 font-black px-2.5 py-1 rounded-lg border border-emerald-500/10 uppercase tracking-wider shrink-0 select-none">
+                <span className="text-[9px] banner-badge font-black px-2.5 py-1 rounded-lg border uppercase tracking-wider shrink-0 select-none">
                   สุดยอดเลยครับ 🎉
                 </span>
               </div>
             ) : (
-              <div className="p-4 rounded-2xl app-surface-soft text-zinc-450 text-xs flex items-center gap-3 shadow-inner">
+              <div className="p-3.5 lg:p-4 rounded-2xl app-surface-soft text-zinc-500 dark:text-zinc-450 text-xs flex items-center gap-3 shadow-inner">
                 <span className="text-lg">💤</span>
                 <div>
-                  <span className="font-extrabold block text-zinc-300">วันนี้พ่อไม่ได้ไปทำงาน</span>
-                  <span className="text-[10px] text-zinc-500">วันนี้เป็นวันหยุดพักผ่อนสบายๆ ของคุณพ่อครับ 🏠</span>
+                  <span className="font-extrabold block text-[var(--text-main)]">วันนี้พ่อไม่ได้ไปทำงาน</span>
+                  <span className="text-[10px] text-[var(--text-muted)]">วันนี้เป็นวันหยุดพักผ่อนสบายๆ ของคุณพ่อครับ 🏠</span>
                 </div>
               </div>
             )}
@@ -308,24 +315,24 @@ export default function Dashboard() {
         </div>
 
         {/* RIGHT COLUMN: Chronological Activities Feed (7 cols on Desktop) */}
-        <div className="lg:col-span-7 glass-panel rounded-3xl p-5 border border-zinc-800/80 flex flex-col overflow-hidden min-h-[360px] shadow-2xl">
+        <div className="lg:col-span-7 glass-panel rounded-3xl p-4 lg:p-5 border border-zinc-800/80 flex flex-col lg:overflow-hidden overflow-hidden min-h-[300px] lg:min-h-[360px] flex-1 shadow-2xl">
           
-          <div className="flex justify-between items-center pb-4 border-b border-zinc-850 shrink-0 select-none">
+          <div className="flex justify-between items-center pb-3 lg:pb-4 border-b border-zinc-850 shrink-0 select-none">
             <div>
-              <h3 className="text-xs font-black text-zinc-300 tracking-wider uppercase flex items-center gap-1.5">
+              <h3 className="text-xs font-black text-[var(--text-main)] tracking-wider uppercase flex items-center gap-1.5">
                 รายการเงินล่าสุดประจำบ้าน 🏠
               </h3>
-              <p className="text-[9.5px] text-zinc-500 mt-0.5">
+              <p className="text-[9.5px] text-[var(--text-muted)] mt-0.5">
                 แสดงธุรกรรมของ: {new Date(selectedDate).toLocaleDateString('th-TH', { day: 'numeric', month: 'long', year: 'numeric' })}
               </p>
             </div>
-            <span className="text-[8px] px-2 py-0.5 bg-emerald-500/10 text-emerald-400 border border-emerald-500/10 rounded-full font-bold uppercase tracking-wider animate-pulse-slow">
+            <span className="text-[8px] px-2 py-0.5 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/10 rounded-full font-bold uppercase tracking-wider animate-pulse-slow">
               อัปเดตสด
             </span>
           </div>
 
           {/* Scrollable feed box */}
-          <div className="flex-1 overflow-y-auto pr-1 mt-4 space-y-3.5 divide-y divide-zinc-850/40 min-h-0 w-full">
+          <div className="flex-1 lg:overflow-y-auto pr-1 mt-3 lg:mt-4 space-y-3.5 divide-y divide-zinc-850/40 min-h-0 w-full overflow-y-auto">
             {selectedDayTransactions.length === 0 ? (
               <div className="py-20 text-center flex flex-col items-center justify-center text-zinc-500">
                 <AlertCircle size={36} className="text-zinc-750 mb-3" />
@@ -351,7 +358,7 @@ export default function Dashboard() {
                   <div 
                     key={t.id} 
                     onClick={() => setSelectedTx(t)}
-                    className="flex w-full justify-between items-center pt-3.5 first:pt-0 pb-2.5 animate-slide-up cursor-pointer hover:bg-zinc-800/10 px-2 rounded-xl transition-all"
+                    className="flex w-full justify-between items-center py-3 px-2.5 animate-slide-up cursor-pointer hover:bg-zinc-800/10 rounded-2xl transition-all"
                     style={{ animationDelay: `${Math.min(idx * 30, 300)}ms` }}
                   >
                     <div className="flex items-center gap-3 min-w-0">
@@ -370,23 +377,23 @@ export default function Dashboard() {
                         )}
                       </div>
                       
-                      {/* Transaction metadata */}
-                      <div className="min-w-0">
-                        <span className="text-xs font-black text-zinc-100 block tracking-wide">
-                          {t.profiles?.display_name || 'สมาชิกในบ้าน'}
+                      {/* Transaction metadata stacked 1 - 2 - 3 */}
+                      <div className="min-w-0 flex flex-col gap-0.5">
+                        {/* 1. Transaction Type & User Name (Largest) */}
+                        <span className={`text-sm font-black uppercase tracking-wide flex items-center gap-1.5 ${
+                          t.type === 'income' ? 'text-emerald-500' : 'text-rose-500'
+                        }`}>
+                          {t.type === 'income' ? 'รายรับ' : 'รายจ่าย'} • <span className="text-[var(--text-main)] font-extrabold">{t.profiles?.display_name || 'สมาชิกในบ้าน'}</span>
                         </span>
-                        <div className="flex items-center gap-x-1.5 gap-y-0.5 mt-0.5 flex-wrap">
-                          <span className={`text-[9px] font-black flex items-center gap-0.5 uppercase ${
-                            t.type === 'income' ? 'text-emerald-400' : 'text-rose-455'
-                          }`}>
-                            {t.type === 'income' ? 'รายรับ' : 'รายจ่าย'}
-                          </span>
-                          <span className="text-zinc-700 text-[8px]">•</span>
-                          <span className="text-[10px] text-zinc-300 truncate font-bold max-w-[130px] sm:max-w-[200px]">
-                            {t.description}
-                          </span>
-                          <span className="text-zinc-750 text-[8px]">•</span>
-                        <span className="text-[9px] text-zinc-500 font-bold app-surface-soft px-1.5 py-0.5 rounded">
+                        
+                        {/* 2. Description (Slightly smaller) */}
+                        <span className="text-[12.5px] text-[var(--text-main)] font-semibold truncate max-w-[150px] sm:max-w-[220px]">
+                          {t.description}
+                        </span>
+
+                        {/* 3. Category Tag (Smallest) */}
+                        <div className="flex items-center mt-1">
+                          <span className="text-[9.5px] text-zinc-500 dark:text-zinc-400 font-bold app-surface-soft px-1.5 py-0.5 rounded border border-zinc-800/20 select-none">
                             {t.category.split(' ').pop()}
                           </span>
                         </div>
@@ -394,13 +401,13 @@ export default function Dashboard() {
                     </div>
 
                     <div className="text-right shrink-0 ml-3">
-                      <span className={`text-xs font-black tracking-tight block ${
+                      <span className={`text-[15px] font-black tracking-tight block ${
                         t.type === 'income' ? 'amount-income' : 'amount-expense'
                       }`}>
                         {t.type === 'income' ? '+' : '-'} ฿{Number(t.amount).toLocaleString(undefined, { minimumFractionDigits: 2 })}
                       </span>
-                      <div className="flex items-center justify-end gap-1 text-[8.5px] text-zinc-550 font-bold mt-0.5 font-mono">
-                        <Clock size={8} className="text-zinc-650" />
+                      <div className="flex items-center justify-end gap-1 text-[9.5px] text-zinc-550 font-bold mt-1 font-mono">
+                        <Clock size={8.5} className="text-zinc-650" />
                         <span>{timeString}</span>
                         {t.receipt_url && (
                           <>

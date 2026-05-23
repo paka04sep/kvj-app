@@ -29,7 +29,8 @@
   --expense: #fb7185;
   --expense-soft: rgba(251, 113, 133, 0.12);
   --expense-border: rgba(251, 113, 133, 0.28);
-  
+   
+
   --color-primary: #10b981;
   --color-primary-dark: #059669;
   --color-primary-light: #34d399;
@@ -58,6 +59,7 @@ html.light {
   --expense: #e11d48;
   --expense-soft: rgba(225, 29, 72, 0.09);
   --expense-border: rgba(225, 29, 72, 0.22);
+   
   
   --color-primary: #059669;
   --color-primary-dark: #047857;
@@ -107,6 +109,61 @@ html.light {
   0% { transform: scale(0.9); }
   65% { transform: scale(1.08); }
   100% { transform: scale(1); }
+}
+
+@keyframes quick-action-in {
+  from {
+    opacity: 0;
+    filter: blur(6px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+  }
+}
+
+@keyframes quick-menu-in {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(18px) scale(0.86);
+    filter: blur(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+@keyframes quick-menu-out {
+  from {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1);
+    filter: blur(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-50%) translateY(18px) scale(0.86);
+    filter: blur(5px);
+  }
+}
+
+@keyframes quick-backdrop-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes quick-backdrop-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
 }
 
 body {
@@ -269,21 +326,22 @@ body {
 }
 
 /* Base style overrides to avoid hardcoded text color issues in Light Theme */
-html.light .text-white:not(.btn-primary):not(.btn-primary *):not([class*="bg-emerald-"]):not([class*="bg-emerald-"] *):not([class*="bg-rose-"]):not([class*="bg-rose-"] *):not([class*="bg-zinc-9"]):not([class*="bg-zinc-9"] *) {
+html.light .text-white:not(.btn-primary):not(.btn-primary *):not([class*="bg-emerald-"]):not([class*="bg-emerald-"] *):not([class*="bg-rose-"]):not([class*="bg-rose-"] *) {
   color: var(--text-main) !important;
 }
 
-html.light .text-zinc-50:not(.btn-primary):not(.btn-primary *):not([class*="bg-emerald-"]):not([class*="bg-emerald-"] *):not([class*="bg-rose-"]):not([class*="bg-rose-"] *):not([class*="bg-zinc-9"]):not([class*="bg-zinc-9"] *),
-html.light .text-zinc-100:not(.btn-primary):not(.btn-primary *):not([class*="bg-emerald-"]):not([class*="bg-emerald-"] *):not([class*="bg-rose-"]):not([class*="bg-rose-"] *):not([class*="bg-zinc-9"]):not([class*="bg-zinc-9"] *),
-html.light .text-zinc-200:not(.btn-primary):not(.btn-primary *):not([class*="bg-emerald-"]):not([class*="bg-emerald-"] *):not([class*="bg-rose-"]):not([class*="bg-rose-"] *):not([class*="bg-zinc-9"]):not([class*="bg-zinc-9"] *) {
+html.light .text-zinc-50:not(.btn-primary):not(.btn-primary *):not([class*="bg-emerald-"]):not([class*="bg-emerald-"] *):not([class*="bg-rose-"]):not([class*="bg-rose-"] *),
+html.light .text-zinc-100:not(.btn-primary):not(.btn-primary *):not([class*="bg-emerald-"]):not([class*="bg-emerald-"] *):not([class*="bg-rose-"]):not([class*="bg-rose-"] *),
+html.light .text-zinc-200:not(.btn-primary):not(.btn-primary *):not([class*="bg-emerald-"]):not([class*="bg-emerald-"] *):not([class*="bg-rose-"]):not([class*="bg-rose-"] *) {
   color: var(--text-main) !important;
 }
 
-html.light .text-zinc-300:not(.btn-primary):not(.btn-primary *):not([class*="bg-emerald-"]):not([class*="bg-emerald-"] *):not([class*="bg-rose-"]):not([class*="bg-rose-"] *):not([class*="bg-zinc-9"]):not([class*="bg-zinc-9"] *),
-html.light .text-zinc-400:not(.btn-primary):not(.btn-primary *):not([class*="bg-emerald-"]):not([class*="bg-emerald-"] *):not([class*="bg-rose-"]):not([class*="bg-rose-"] *):not([class*="bg-zinc-9"]):not([class*="bg-zinc-9"] *),
-html.light .text-zinc-500:not(.btn-primary):not(.btn-primary *):not([class*="bg-emerald-"]):not([class*="bg-emerald-"] *):not([class*="bg-rose-"]):not([class*="bg-rose-"] *):not([class*="bg-zinc-9"]):not([class*="bg-zinc-9"] *) {
+html.light .text-zinc-300:not(.btn-primary):not(.btn-primary *):not([class*="bg-emerald-"]):not([class*="bg-emerald-"] *):not([class*="bg-rose-"]):not([class*="bg-rose-"] *),
+html.light .text-zinc-400:not(.btn-primary):not(.btn-primary *):not([class*="bg-emerald-"]):not([class*="bg-emerald-"] *):not([class*="bg-rose-"]):not([class*="bg-rose-"] *),
+html.light .text-zinc-500:not(.btn-primary):not(.btn-primary *):not([class*="bg-emerald-"]):not([class*="bg-emerald-"] *):not([class*="bg-rose-"]):not([class*="bg-rose-"] *) {
   color: var(--text-muted) !important;
 }
+
 
 /* Keep original text colors when explicitly wanted */
 .text-emerald-400, .text-emerald-500 {
@@ -412,6 +470,72 @@ html.light .desktop-nav-link.active svg {
   filter: drop-shadow(0 2px 6px rgba(5, 150, 105, 0.22));
 }
 
+/* --- Light Mode: FAB Menu --- */
+html.light .fab-backdrop {
+  backdrop-filter: blur(14px) saturate(1.4) !important;
+  -webkit-backdrop-filter: blur(14px) saturate(1.4) !important;
+}
+
+html.light .fab-backdrop:not([class*="bg-black/0"]) {
+  background-color: rgba(255, 255, 255, 0.55) !important;
+}
+
+html.light .fab-action-circle {
+  background: rgba(255, 255, 255, 0.95) !important;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.9) inset,
+    0 8px 24px rgba(15, 23, 42, 0.12),
+    0 2px 6px rgba(15, 23, 42, 0.06) !important;
+}
+
+html.light .fab-action[data-tone="expense"] .fab-action-circle {
+  border-color: rgba(225, 29, 72, 0.35) !important;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.9) inset,
+    0 0 0 3px rgba(225, 29, 72, 0.08),
+    0 8px 24px rgba(225, 29, 72, 0.12),
+    0 2px 6px rgba(15, 23, 42, 0.06) !important;
+}
+
+html.light .fab-action[data-tone="income"] .fab-action-circle {
+  border-color: rgba(5, 150, 105, 0.4) !important;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.9) inset,
+    0 0 0 3px rgba(5, 150, 105, 0.08),
+    0 8px 24px rgba(5, 150, 105, 0.12),
+    0 2px 6px rgba(15, 23, 42, 0.06) !important;
+}
+
+html.light .fab-action[data-tone="slip"] .fab-action-circle {
+  border-color: rgba(14, 116, 144, 0.3) !important;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.9) inset,
+    0 0 0 3px rgba(14, 116, 144, 0.06),
+    0 8px 24px rgba(14, 116, 144, 0.1),
+    0 2px 6px rgba(15, 23, 42, 0.06) !important;
+}
+
+html.light .fab-action[data-tone="expense"] .fab-action-icon {
+  color: #e11d48 !important;
+  filter: drop-shadow(0 1px 3px rgba(225, 29, 72, 0.3)) !important;
+}
+
+html.light .fab-action[data-tone="income"] .fab-action-icon {
+  color: #059669 !important;
+  filter: drop-shadow(0 1px 3px rgba(5, 150, 105, 0.3)) !important;
+}
+
+html.light .fab-action[data-tone="slip"] .fab-action-icon {
+  color: #0e7490 !important;
+  filter: drop-shadow(0 1px 3px rgba(14, 116, 144, 0.25)) !important;
+}
+
+html.light .fab-action-label {
+  color: #0f172a !important;
+  text-shadow: 0 1px 4px rgba(255, 255, 255, 0.8) !important;
+  filter: none !important;
+}
+
 html.light .app-modal,
 html.light .transaction-detail-modal {
   background: rgba(255, 255, 255, 0.98) !important;
@@ -432,4 +556,75 @@ html.light .app-surface {
 
 html.light .app-surface-soft {
   background: rgba(248, 250, 252, 0.82) !important;
+}
+
+/* --- Father Encouraging Banner High-Contrast Premium Styles --- */
+.father-income-banner {
+  background:
+    radial-gradient(circle at 8% 20%, rgba(255, 255, 255, 0.22), transparent 28%),
+    linear-gradient(135deg, #14b8a6 0%, #059669 42%, #065f46 100%) !important;
+  border: 1px solid rgba(167, 243, 208, 0.78) !important;
+  box-shadow:
+    0 16px 34px -14px rgba(5, 150, 105, 0.82),
+    0 0 0 1px rgba(255, 255, 255, 0.14) inset,
+    0 1px 0 rgba(255, 255, 255, 0.35) inset !important;
+  color: #ffffff !important;
+  opacity: 1 !important;
+  filter: saturate(1.18) contrast(1.08);
+}
+
+.father-income-banner .banner-title {
+  color: #ffffff !important;
+  text-shadow: 0 1px 3px rgba(4, 47, 46, 0.42) !important;
+}
+
+.father-income-banner .banner-desc {
+  color: #ecfdf5 !important;
+  text-shadow: 0 1px 2px rgba(4, 47, 46, 0.28) !important;
+}
+
+.father-income-banner .banner-amount {
+  color: #ffffff !important;
+  text-shadow: 0 1px 3px rgba(4, 47, 46, 0.42) !important;
+}
+
+.father-income-banner .banner-badge {
+  background-color: #ffffff !important;
+  color: #065f46 !important;
+  border-color: rgba(255, 255, 255, 0.85) !important;
+  box-shadow:
+    0 8px 18px -10px rgba(4, 47, 46, 0.75),
+    0 0 0 1px rgba(6, 95, 70, 0.06) inset !important;
+}
+
+html.light .father-income-banner {
+  background:
+    radial-gradient(circle at 8% 20%, rgba(255, 255, 255, 0.32), transparent 30%),
+    linear-gradient(135deg, #10b981 0%, #059669 46%, #047857 100%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.88) !important;
+  box-shadow:
+    0 18px 42px -18px rgba(4, 120, 87, 0.72),
+    0 0 0 1px rgba(5, 150, 105, 0.24),
+    0 1px 0 rgba(255, 255, 255, 0.38) inset !important;
+  color: #ffffff !important;
+}
+
+html.light .father-income-banner .banner-title {
+  color: #ffffff !important;
+  text-shadow: 0 1px 3px rgba(4, 47, 46, 0.38) !important;
+}
+
+html.light .father-income-banner .banner-desc {
+  color: #f0fdf4 !important;
+}
+
+html.light .father-income-banner .banner-amount {
+  color: #ffffff !important;
+}
+
+html.light .father-income-banner .banner-badge {
+  background-color: #ffffff !important;
+  color: #047857 !important;
+  border: 1px solid rgba(255, 255, 255, 0.92) !important;
+  box-shadow: 0 8px 18px -10px rgba(4, 47, 46, 0.55) !important;
 }

@@ -125,9 +125,13 @@ create policy "Users can update their own transactions"
   using (user_id = auth.uid());
 
 drop policy if exists "Users can delete their own transactions" on public.transactions;
-create policy "Users can delete their own transactions"
+drop policy if exists "Only admins can delete transactions in their family" on public.transactions;
+create policy "Only admins can delete transactions in their family"
   on public.transactions for delete
-  using (user_id = auth.uid());
+  using (
+    (select role from public.profiles where id = auth.uid()) = 'admin'
+    and family_id in (select family_id from public.profiles where id = auth.uid())
+  );
 
 -- Policies for settlements
 drop policy if exists "Users can view settlements in the same family" on public.settlements;

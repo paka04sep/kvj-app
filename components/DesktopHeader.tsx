@@ -17,7 +17,7 @@ export default function DesktopHeader() {
           <Image src="/icon.svg" alt="KVJ Logo" width={22} height={22} priority />
         </div>
         <div className="min-w-0">
-          <h1 className="truncate text-sm font-black tracking-tight text-white">
+          <h1 className="truncate text-sm font-black tracking-tight text-[var(--text-main)]">
             KVJ Family Space
           </h1>
           <span className="block -mt-0.5 truncate text-[9px] font-semibold uppercase tracking-wider text-emerald-400">
