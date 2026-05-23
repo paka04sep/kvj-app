@@ -64,13 +64,56 @@ export default function OverviewPage() {
   // Checked items for rollforward copy
   const [rollforwardSelection, setRollforwardSelection] = useState<Record<string, boolean>>({})
   
+  // Obligations Templates (Dropdown List)
+  const DEFAULT_TEMPLATES = [
+    'ค่าไฟฟ้า',
+    'ค่าน้ำประปา',
+    'ค่าอินเทอร์เน็ต',
+    'ค่าโทรศัพท์มือถือ',
+    'ค่าผ่อนรถ',
+    'ค่าประกันภัย',
+  ]
+  const [customTemplates, setCustomTemplates] = useState<string[]>([])
+  const [showObDropdown, setShowObDropdown] = useState(false)
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('custom_obligation_templates')
+      if (saved) {
+        try {
+          setCustomTemplates(JSON.parse(saved))
+        } catch {
+          setCustomTemplates([])
+        }
+      }
+    }
+  }, [])
+
+  const handleAddTemplate = (name: string) => {
+    const trimmed = name.trim()
+    if (!trimmed || DEFAULT_TEMPLATES.includes(trimmed) || customTemplates.includes(trimmed)) return
+    const updated = [...customTemplates, trimmed]
+    setCustomTemplates(updated)
+    localStorage.setItem('custom_obligation_templates', JSON.stringify(updated))
+  }
+
+  const handleDeleteTemplate = (e: React.MouseEvent, name: string) => {
+    e.stopPropagation() // Prevent selecting the template when clicking delete
+    const updated = customTemplates.filter(t => t !== name)
+    setCustomTemplates(updated)
+    localStorage.setItem('custom_obligation_templates', JSON.stringify(updated))
+  }
+  
   const router = useRouter()
   const supabase = createClient()
 
   // Track light/dark mode for dynamic chart styling
   useEffect(() => {
     const checkTheme = () => {
-      setIsDarkTheme(!document.documentElement.classList.contains('light'))
+      if (typeof window !== 'undefined') {
+        const theme = localStorage.getItem('theme') || 'dark'
+        setIsDarkTheme(theme !== 'light')
+      }
     }
     checkTheme()
     window.addEventListener('theme-change', checkTheme)
@@ -759,84 +802,22 @@ export default function OverviewPage() {
               : 'text-zinc-400 hover:text-zinc-200'
           }`}
         >
-          ภาระบิลของบ้าน 📝
+          ค่าใช้จ่ายประจำเดือน 📝
         </button>
       </div>
 
       {/* 3. Conditional Scrollable Workspace */}
-      <div className="flex-1 overflow-y-auto pr-1 space-y-5">
+      <div className="flex-1 overflow-y-auto pr-1 space-y-4">
         
         {activeTab === 'stats' ? (
           <>
-            {/* Row 1: KPI Cards + Savings Goal Widget */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-stretch">
-              
-              {/* Dashboard Main KPIs (3 blocks, spans 8 cols) */}
-              <div className="lg:col-span-8 grid grid-cols-1 sm:grid-cols-3 gap-4">
-                
-                {/* Income KPI */}
-                <div className="glass-card rounded-2xl p-4.5 flex flex-col justify-between shadow-lg relative overflow-hidden group hover:border-emerald-500/20 transition-all duration-300">
-                  <div className="flex justify-between items-center mb-4">
-                    <span className="text-[10px] font-black text-zinc-400 tracking-wider uppercase select-none">รายรับประจำเดือน</span>
-                    <div className="w-8 h-8 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center border border-emerald-500/5 select-none">
-                      <TrendingUp size={15} className="stroke-[2.5px]" />
-                    </div>
-                  </div>
-                  <div>
-                    <span className="text-[10px] text-zinc-500 font-bold block select-none">รายรับทั้งหมด</span>
-                    <span className="text-lg font-black text-emerald-400 tracking-tight mt-0.5 block truncate">
-                      ฿{totalIncome.toLocaleString(undefined, { minimumFractionDigits: 2 })}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Expense KPI */}
-                <div className="glass-card rounded-2xl p-4.5 flex flex-col justify-between shadow-lg relative overflow-hidden group hover:border-rose-500/20 transition-all duration-300">
-                  <div className="flex justify-between items-center mb-4">
-                    <span className="text-[10px] font-black text-zinc-400 tracking-wider uppercase select-none">รายจ่ายประจำเดือน</span>
-                    <div className="w-8 h-8 rounded-xl bg-rose-500/10 text-rose-455 flex items-center justify-center border border-rose-500/5 select-none">
-                      <TrendingDown size={15} className="stroke-[2.5px]" />
-                    </div>
-                  </div>
-                  <div>
-                    <span className="text-[10px] text-zinc-500 font-bold block select-none">รายจ่ายทั้งหมด</span>
-                    <span className="text-lg font-black amount-expense tracking-tight mt-0.5 block truncate">
-                      ฿{totalExpense.toLocaleString(undefined, { minimumFractionDigits: 2 })}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Net Savings Balance */}
-                <div className="glass-panel rounded-2xl p-4.5 border-l-4 border-l-emerald-500 shadow-lg flex flex-col justify-between">
-                  <div className="flex justify-between items-center mb-3.5 select-none">
-                    <div className="flex items-center gap-1.5">
-                      <Wallet className="text-emerald-400" size={14} />
-                      <span className="text-xs font-bold text-zinc-300">คงเหลือประจำเดือน</span>
-                    </div>
-                  </div>
-                  <div>
-                    <span className="text-lg font-black text-[var(--text-main)] tracking-tight block truncate">
-                      ฿{currentSavings.toLocaleString(undefined, { minimumFractionDigits: 2 })}
-                    </span>
-                    <span className={`text-[8.5px] font-black px-2 py-0.5 rounded-md inline-block mt-2 border select-none ${
-                      currentSavings >= 0 
-                        ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/10' 
-                        : 'bg-rose-500/15 text-rose-400 border-rose-500/10'
-                    }`}>
-                      {currentSavings >= 0 ? '💰 สรุปดุลการเงินเป็นบวก' : '⚠️ รายจ่ายเกินรายรับประจำเดือน'}
-                    </span>
-                  </div>
-                </div>
-
-              </div>
-
-              {/* savings goal bar, spans 4 cols */}
+               {/* savings goal bar, spans 4 cols */}
               <div className="lg:col-span-4 glass-card rounded-2xl p-4.5 border border-zinc-800/80 flex flex-col justify-between shadow-lg">
                 <div>
                   <div className="flex justify-between items-center mb-2.5">
                     <div className="flex items-center gap-1.5 select-none">
-                      <Target size={15} className="text-emerald-400" />
-                      <span className="text-xs font-black text-zinc-200 tracking-wide uppercase">เป้าออมสะสม</span>
+                      <Target size={20} className="text-emerald-400" />
+                      <span className="text-[16px] font-black text-[var(--color-text-primary)] opacity-80 tracking-wide uppercase">ตั้งเป้าการเก็บเงิน</span>
                     </div>
                     {editingGoal ? (
                       <form onSubmit={handleUpdateGoal} className="flex items-center gap-1">
@@ -855,7 +836,7 @@ export default function OverviewPage() {
                     ) : (
                       <button 
                         onClick={() => { setNewGoalInput(String(savingsGoal)); setEditingGoal(true); }}
-                        className="text-[10px] text-zinc-400 hover:text-emerald-400 font-bold select-none cursor-pointer transition-colors"
+                        className="text-[12px] text-zinc-400 hover:text-emerald-400 font-bold select-none cursor-pointer transition-colors underline"
                       >
                         แก้ไข
                       </button>
@@ -893,6 +874,73 @@ export default function OverviewPage() {
                 )}
               </div>
 
+            {/* Row 1: KPI Cards + Savings Goal Widget */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-stretch">
+              
+              {/* Dashboard Main KPIs (3 blocks, spans 8 cols) */}
+              <div className="lg:col-span-8 grid grid-cols-1 sm:grid-cols-3 gap-4">
+                 
+                {/* Income KPI */}
+                <div className="glass-card rounded-2xl p-4.5 flex flex-col justify-between shadow-lg relative overflow-hidden group hover:border-emerald-500/20 transition-all duration-300">
+                  <div className="flex justify-between items-center mb-4">
+                    <span className="text-[16px] font-black text-[var(--color-text-primary)] tracking-wider uppercase select-none opacity-80">รายรับประจำเดือน</span>
+                    <div className="w-8 h-8 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center border border-emerald-500/5 select-none">
+                      <TrendingUp size={15} className="stroke-[2.5px]" />
+                    </div>
+                  </div> 
+                  <div>
+                    <span className="text-[10px] text-zinc-500 font-bold block select-none">รายรับทั้งหมด</span>
+                    <span className="text-lg font-black text-emerald-400 tracking-tight mt-0.5 block truncate">
+                      ฿{totalIncome.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Expense KPI */}
+                <div className="glass-card rounded-2xl p-4.5 flex flex-col justify-between shadow-lg relative overflow-hidden group hover:border-rose-500/20 transition-all duration-300">
+                  <div className="flex justify-between items-center mb-4">
+                    <span className="text-[16px] font-black text-[var(--color-text-primary)] tracking-wider uppercase select-none opacity-80">รายจ่ายประจำเดือน</span>
+                    <div className="w-8 h-8 rounded-xl bg-rose-500/10 text-rose-455 flex items-center justify-center border border-rose-500/5 select-none">
+                      <TrendingDown size={15} className="stroke-[2.5px]" />
+                    </div>
+                  </div>
+                  <div>
+                    <span className="text-[10px] text-zinc-500 font-bold block select-none">รายจ่ายทั้งหมด</span>
+                    <span className="text-lg font-black amount-expense tracking-tight mt-0.5 block truncate">
+                      ฿{totalExpense.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Net Savings Balance */}
+                <div className={`glass-panel rounded-2xl p-4.5 border-l-4 shadow-lg flex flex-col justify-between ${
+                  currentSavings >= 0 ? 'border-l-emerald-500' : 'border-l-rose-500'
+                }`}>
+                  <div className="flex justify-between items-center mb-3.5 select-none">
+                    <div className="flex items-center gap-1.5">
+                      <Wallet className={`mr-0.5 ${currentSavings >= 0 ? 'text-emerald-400' : 'text-rose-400'}`} size={20} />
+                      <span className="text-[16px] font-bold text-[var(--color-text-primary)] opacity-80">คงเหลือประจำเดือน</span>
+                    </div>
+                  </div>
+                  <div>
+                    <span className={`text-lg font-black tracking-tight block truncate ${
+                      currentSavings >= 0 ? 'text-emerald-400' : 'text-rose-400'
+                    }`}>
+                      {currentSavings >= 0 
+                        ? `฿${currentSavings.toLocaleString(undefined, { minimumFractionDigits: 2 })}` 
+                        : `-฿${Math.abs(currentSavings).toLocaleString(undefined, { minimumFractionDigits: 2 })}`
+                      }
+                    </span>
+                    <span className={`text-[9.5px] font-black px-2 py-0.5 rounded-md inline-block mt-2 border select-none ${
+                      currentSavings >= 0 
+                        ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/10' 
+                        : 'bg-rose-500/15 text-rose-400 border-rose-500/10'
+                    }`}>
+                      {currentSavings >= 0 ? '💰 สรุปดุลการเงินเป็นบวก' : '⚠️ รายจ่ายเกินรายรับประจำเดือน'}
+                    </span>
+                  </div>
+                </div>
+              </div>
             </div>
 
             {/* Row 2: Father's daily trend Area Chart + Expense Category breakdown Pie Chart */}
@@ -1035,7 +1083,7 @@ export default function OverviewPage() {
               {/* Box 1: Obligations Count Summary */}
               <div className="glass-card rounded-2xl p-4.5 flex flex-col justify-between shadow-lg relative overflow-hidden">
                 <div className="flex justify-between items-center mb-3">
-                  <span className="text-[10px] font-black text-zinc-400 tracking-wider uppercase select-none">ความคืบหน้า</span>
+                  <span className="text-[16px] font-black text-[var(--color-text-primary)] opacity-80 tracking-wider uppercase select-none">ความคืบหน้า</span>
                   <span className="text-[8.5px] px-2 py-0.5 bg-emerald-500/10 text-emerald-400 border border-emerald-500/10 rounded-full font-black">
                     {paidObligations.length} / {totalObligationsCount} รายการ
                   </span>
@@ -1057,7 +1105,7 @@ export default function OverviewPage() {
               {/* Box 2: Total unpaid obligations */}
               <div className="glass-card rounded-2xl p-4.5 flex flex-col justify-between shadow-lg relative overflow-hidden group hover:border-rose-500/20 transition-all duration-300">
                 <div className="flex justify-between items-center mb-3">
-                  <span className="text-[10px] font-black text-zinc-400 tracking-wider uppercase select-none">ภาระที่ต้องจ่าย</span>
+                  <span className="text-[16px] font-black text-[var(--color-text-primary)] opacity-80 tracking-wider uppercase select-none">ที่ต้องจ่ายเดือนนี้</span>
                   <div className="w-7 h-7 rounded-lg bg-rose-500/10 text-rose-455 flex items-center justify-center border border-rose-500/5 select-none">
                     <AlertCircle size={14} className="stroke-[2.5px]" />
                   </div>
@@ -1073,7 +1121,7 @@ export default function OverviewPage() {
               {/* Box 3: Total monthly budget */}
               <div className="glass-card rounded-2xl p-4.5 flex flex-col justify-between shadow-lg relative overflow-hidden">
                 <div className="flex justify-between items-center mb-3">
-                  <span className="text-[10px] font-black text-zinc-400 tracking-wider uppercase select-none">บิลของบ้านทั้งหมด</span>
+                  <span className="text-[16px] font-black text-[var(--color-text-primary)] opacity-80 tracking-wider uppercase select-none">ยอดรวมทั้งหมดในเดือนนี้</span>
                   <div className="w-7 h-7 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center border border-emerald-500/5 select-none">
                     <Plus size={14} className="stroke-[2.5px]" />
                   </div>
@@ -1091,11 +1139,11 @@ export default function OverviewPage() {
             {/* Title / Action bar */}
             <div className="flex justify-between items-center select-none pt-2">
               <div>
-                <h3 className="text-xs font-black text-zinc-300 tracking-wider uppercase flex items-center gap-1">
-                  📋 รายการภาระบิลของครอบครัว
+                <h3 className="text-[14px] font-black text-zinc-300 tracking-wider uppercase flex items-center gap-1">
+                  📋 รายการทั้งหมดในแต่ละเดือน
                 </h3>
                 <p className="text-[10px] text-zinc-500 mt-0.5">
-                  เช็คลิสต์และบันทึกจ่ายบิลตามจริงของคุณแม่ จัดการได้อย่างยืดหยุ่นร่วมกัน
+                  เช็คลิสต์และบันทึกค่าใช้จ่ายตามจริงในแต่ละเดือน
                 </p>
               </div>
               <button
@@ -1106,7 +1154,7 @@ export default function OverviewPage() {
                   setObIsRecurring(false)
                   setShowAddModal(true)
                 }}
-                className="btn-primary px-3.5 py-2 text-[10px] font-black flex items-center gap-1 shadow-md hover:scale-102 transition-transform cursor-pointer"
+                className="btn-primary px-3.5 py-3 text-[10px] font-black flex items-center gap-1 shadow-md hover:scale-102 transition-transform cursor-pointer"
               >
                 <Plus size={12} className="stroke-[3px]" />
                 เพิ่มภาระบิล
@@ -1241,7 +1289,7 @@ export default function OverviewPage() {
                       <div className="flex items-baseline justify-between mt-5 pt-3.5 border-t border-zinc-850/40">
                         <div>
                           <span className="text-[8.5px] text-zinc-500 font-extrabold uppercase block select-none">ยอดเรียกเก็บ</span>
-                          <span className="text-lg font-black tracking-tight text-white block">
+                          <span className="text-lg font-black tracking-tight amount-expense block">
                             ฿{Number(ob.amount).toLocaleString(undefined, { minimumFractionDigits: 2 })}
                           </span>
                         </div>
@@ -1276,7 +1324,7 @@ export default function OverviewPage() {
                         ) : (
                           <button
                             onClick={() => handlePayObligation(currentUser?.id, ob)}
-                            className="px-3.5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 active:scale-97 text-black text-[10px] font-black flex items-center gap-1 shadow-md hover:scale-103 transition-all cursor-pointer shrink-0"
+                            className="btn-primary px-3.5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 active:scale-97 text-black text-[10px] font-black flex items-center gap-1 shadow-md hover:scale-103 transition-all cursor-pointer shrink-0"
                           >
                             <Check size={11} className="stroke-[3.5px]" />
                             จ่ายบิลนี้
@@ -1300,28 +1348,120 @@ export default function OverviewPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-zinc-950/85 backdrop-blur-sm animate-fade-in">
           <div className="glass-panel w-full max-w-md rounded-3xl border border-zinc-800 p-6 shadow-2xl animate-slide-up select-none">
             <div className="flex justify-between items-center pb-4.5 border-b border-zinc-850">
-              <h3 className="text-xs font-black text-zinc-200 tracking-wider uppercase flex items-center gap-1">
+              <h3 className="text-[14px] font-black text-zinc-200 tracking-wider uppercase flex items-center gap-1">
                 ➕ เพิ่มภาระบิลประจำบ้านใหม่
               </h3>
-              <button 
-                onClick={() => setShowAddModal(false)}
-                className="text-zinc-500 hover:text-zinc-300 font-bold cursor-pointer text-xs p-1"
-              >
-                ปิด
-              </button>
             </div>
             
             <form onSubmit={handleAddObligation} className="space-y-4.5 mt-5">
-              <div>
+              <div className="relative">
                 <label className="text-[10px] font-black text-zinc-400 block mb-1.5 uppercase">ชื่อรายการ / ค่าใช้จ่าย</label>
-                <input
-                  type="text"
-                  required
-                  value={obName}
-                  onChange={(e) => setObName(e.target.value)}
-                  placeholder="เช่น ค่าไฟ, ค่าน้ำประปา, ค่าเน็ตแม่..."
-                  className="glass-input w-full px-4 py-3 rounded-xl text-xs text-white"
-                />
+                <div className="relative flex items-center">
+                  <input
+                    type="text"
+                    required
+                    value={obName}
+                    onChange={(e) => {
+                      setObName(e.target.value)
+                      setShowObDropdown(true)
+                    }}
+                    onFocus={() => setShowObDropdown(true)}
+                    placeholder="เช่น ค่าไฟ, ค่าน้ำประปา, ค่าเน็ตแม่..."
+                    className="glass-input w-full pl-4 pr-10 py-3 rounded-xl text-xs text-white"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowObDropdown(!showObDropdown)}
+                    className="absolute right-3 text-zinc-500 hover:text-zinc-300 p-1 cursor-pointer"
+                  >
+                    <ChevronDown size={14} className={`transform transition-transform duration-200 ${showObDropdown ? 'rotate-180' : ''}`} />
+                  </button>
+                </div>
+
+                {showObDropdown && (
+                  <>
+                    <div 
+                      className="fixed inset-0 z-10" 
+                      onClick={() => setShowObDropdown(false)}
+                    />
+                    <div className="absolute left-0 right-0 mt-1 bg-zinc-950/95 border border-zinc-800 rounded-xl shadow-2xl max-h-56 overflow-y-auto z-20 backdrop-blur-md p-1.5 space-y-1 scrollbar-thin">
+                      <div className="text-[9px] font-bold text-zinc-500 px-2 py-1 select-none">
+                        เลือกรายการด่วนหรือพิมพ์ชื่อใหม่
+                      </div>
+                      
+                      {/* 1. Default Templates (System defaults, cannot delete) */}
+                      {DEFAULT_TEMPLATES
+                        .filter(t => !obName || t.toLowerCase().includes(obName.toLowerCase()))
+                        .map((template) => {
+                          const meta = getObligationCategoryMeta(template)
+                          return (
+                            <div
+                              key={`default-${template}`}
+                              onClick={() => {
+                                setObName(template)
+                                setShowObDropdown(false)
+                              }}
+                              className="flex items-center justify-between px-2 py-2 hover:bg-zinc-900 rounded-lg cursor-pointer transition-colors"
+                            >
+                              <div className="flex items-center gap-2">
+                                <span className="text-sm select-none">{meta.emoji}</span>
+                                <span className="text-xs font-bold text-zinc-200">{template}</span>
+                              </div>
+                              <span className="text-[8px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/10 px-1.5 py-0.5 rounded select-none font-bold">
+                                ระบบ
+                              </span>
+                            </div>
+                          )
+                        })}
+
+                      {/* 2. Custom Templates (User favorites, deletable) */}
+                      {customTemplates
+                        .filter(t => !obName || t.toLowerCase().includes(obName.toLowerCase()))
+                        .map((template) => {
+                          const meta = getObligationCategoryMeta(template)
+                          return (
+                            <div
+                              key={`custom-${template}`}
+                              onClick={() => {
+                                setObName(template)
+                                setShowObDropdown(false)
+                              }}
+                              className="flex items-center justify-between px-2 py-2 hover:bg-zinc-900 rounded-lg cursor-pointer transition-colors group/item"
+                            >
+                              <div className="flex items-center gap-2">
+                                <span className="text-sm select-none">{meta.emoji}</span>
+                                <span className="text-xs font-bold text-zinc-200">{template}</span>
+                              </div>
+                              <button
+                                type="button"
+                                onClick={(e) => handleDeleteTemplate(e, template)}
+                                className="p-1 text-zinc-600 hover:text-rose-455 hover:bg-zinc-800 rounded transition-colors"
+                                title="ลบรายการนี้"
+                              >
+                                <Trash2 size={11} className="stroke-[2.5px]" />
+                              </button>
+                            </div>
+                          )
+                        })}
+
+                      {/* Add as Custom Option button */}
+                      {obName.trim() && 
+                       !DEFAULT_TEMPLATES.includes(obName.trim()) && 
+                       !customTemplates.includes(obName.trim()) && (
+                        <div
+                          onClick={() => {
+                            handleAddTemplate(obName)
+                            setShowObDropdown(false)
+                          }}
+                          className="flex items-center gap-2 px-2 py-2 hover:bg-emerald-500/15 text-emerald-400 rounded-lg cursor-pointer transition-colors border border-dashed border-emerald-500/25"
+                        >
+                          <Plus size={11} className="stroke-[3px]" />
+                          <span className="text-xs font-bold truncate">บันทึก &quot;{obName.trim()}&quot; เป็นรายการโปรด</span>
+                        </div>
+                      )}
+                    </div>
+                  </>
+                )}
               </div>
 
               <div>
@@ -1403,15 +1543,114 @@ export default function OverviewPage() {
             </div>
             
             <form onSubmit={handleEditObligation} className="space-y-4.5 mt-5">
-              <div>
+              <div className="relative">
                 <label className="text-[10px] font-black text-zinc-400 block mb-1.5 uppercase">ชื่อรายการ / ค่าใช้จ่าย</label>
-                <input
-                  type="text"
-                  required
-                  value={obName}
-                  onChange={(e) => setObName(e.target.value)}
-                  className="glass-input w-full px-4 py-3 rounded-xl text-xs text-white"
-                />
+                <div className="relative flex items-center">
+                  <input
+                    type="text"
+                    required
+                    value={obName}
+                    onChange={(e) => {
+                      setObName(e.target.value)
+                      setShowObDropdown(true)
+                    }}
+                    onFocus={() => setShowObDropdown(true)}
+                    placeholder="เช่น ค่าไฟ, ค่าน้ำประปา, ค่าเน็ตแม่..."
+                    className="glass-input w-full pl-4 pr-10 py-3 rounded-xl text-xs text-white"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowObDropdown(!showObDropdown)}
+                    className="absolute right-3 text-zinc-500 hover:text-zinc-300 p-1 cursor-pointer"
+                  >
+                    <ChevronDown size={14} className={`transform transition-transform duration-200 ${showObDropdown ? 'rotate-180' : ''}`} />
+                  </button>
+                </div>
+
+                {showObDropdown && (
+                  <>
+                    <div 
+                      className="fixed inset-0 z-10" 
+                      onClick={() => setShowObDropdown(false)}
+                    />
+                    <div className="absolute left-0 right-0 mt-1 bg-zinc-950/95 border border-zinc-800 rounded-xl shadow-2xl max-h-56 overflow-y-auto z-20 backdrop-blur-md p-1.5 space-y-1 scrollbar-thin">
+                      <div className="text-[9px] font-bold text-zinc-500 px-2 py-1 select-none">
+                        เลือกรายการด่วนหรือพิมพ์ชื่อใหม่
+                      </div>
+                      
+                      {/* 1. Default Templates (System defaults, cannot delete) */}
+                      {DEFAULT_TEMPLATES
+                        .filter(t => !obName || t.toLowerCase().includes(obName.toLowerCase()))
+                        .map((template) => {
+                          const meta = getObligationCategoryMeta(template)
+                          return (
+                            <div
+                              key={`edit-default-${template}`}
+                              onClick={() => {
+                                setObName(template)
+                                setShowObDropdown(false)
+                              }}
+                              className="flex items-center justify-between px-2 py-2 hover:bg-zinc-900 rounded-lg cursor-pointer transition-colors"
+                            >
+                              <div className="flex items-center gap-2">
+                                <span className="text-sm select-none">{meta.emoji}</span>
+                                <span className="text-xs font-bold text-zinc-200">{template}</span>
+                              </div>
+                              <span className="text-[8px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/10 px-1.5 py-0.5 rounded select-none font-bold">
+                                ระบบ
+                              </span>
+                            </div>
+                          )
+                        })}
+
+                      {/* 2. Custom Templates (User favorites, deletable) */}
+                      {customTemplates
+                        .filter(t => !obName || t.toLowerCase().includes(obName.toLowerCase()))
+                        .map((template) => {
+                          const meta = getObligationCategoryMeta(template)
+                          return (
+                            <div
+                              key={`edit-custom-${template}`}
+                              onClick={() => {
+                                setObName(template)
+                                setShowObDropdown(false)
+                              }}
+                              className="flex items-center justify-between px-2 py-2 hover:bg-zinc-900 rounded-lg cursor-pointer transition-colors group/item"
+                            >
+                              <div className="flex items-center gap-2">
+                                <span className="text-sm select-none">{meta.emoji}</span>
+                                <span className="text-xs font-bold text-zinc-200">{template}</span>
+                              </div>
+                              <button
+                                type="button"
+                                onClick={(e) => handleDeleteTemplate(e, template)}
+                                className="p-1 text-zinc-600 hover:text-rose-455 hover:bg-zinc-800 rounded transition-colors"
+                                title="ลบรายการนี้"
+                              >
+                                <Trash2 size={11} className="stroke-[2.5px]" />
+                              </button>
+                            </div>
+                          )
+                        })}
+
+                      {/* Add as Custom Option button */}
+                      {obName.trim() && 
+                       !DEFAULT_TEMPLATES.includes(obName.trim()) && 
+                       !customTemplates.includes(obName.trim()) && (
+                        <div
+                          onClick={() => {
+                            handleAddTemplate(obName)
+                            setShowObDropdown(false)
+                          }}
+                          className="flex items-center gap-2 px-2 py-2 hover:bg-emerald-500/15 text-emerald-400 rounded-lg cursor-pointer transition-colors border border-dashed border-emerald-500/25"
+                        >
+                          <Plus size={11} className="stroke-[3px]" />
+                          <span className="text-xs font-bold truncate">บันทึก &quot;{obName.trim()}&quot; เป็นรายการโปรด</span>
+                        </div>
+                      )}
+                    </div>
+                  </>
+                )}
               </div>
 
               <div>

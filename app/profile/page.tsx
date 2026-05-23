@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/utils/supabase/client'
 import { createBrowserClient } from '@supabase/ssr'
@@ -35,6 +35,7 @@ export default function ProfilePage() {
   const [editingName, setEditingName] = useState(false)
   const [displayNameInput, setDisplayNameInput] = useState('')
   const [updatingName, setUpdatingName] = useState(false)
+  const editFormRef = useRef<HTMLFormElement>(null)
 
   // Avatar upload states
   const [uploadingAvatar, setUploadingAvatar] = useState(false)
@@ -94,6 +95,25 @@ export default function ProfilePage() {
 
     loadProfile()
   }, [supabase, router])
+
+  // Cancel edit display name when clicking outside
+  useEffect(() => {
+    if (!editingName) return
+
+    const handleClickOutside = (event: MouseEvent | TouchEvent) => {
+      if (editFormRef.current && !editFormRef.current.contains(event.target as Node)) {
+        setDisplayNameInput(profile?.display_name || '')
+        setEditingName(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    document.addEventListener('touchstart', handleClickOutside)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+      document.removeEventListener('touchstart', handleClickOutside)
+    }
+  }, [editingName, profile])
 
   // Handle Display Name Update
   const handleUpdateName = async (e: React.FormEvent) => {
@@ -356,22 +376,27 @@ export default function ProfilePage() {
               </label>
               <div className="flex-grow min-w-0">
                 {editingName ? (
-                  <form onSubmit={handleUpdateName} className="flex items-center gap-2 mt-1">
+                  <form 
+                    ref={editFormRef}
+                    onSubmit={handleUpdateName} 
+                    className="flex items-center gap-2 mt-1 relative z-20"
+                  >
                     <input
                       type="text"
                       required
                       value={displayNameInput}
                       onChange={(e) => setDisplayNameInput(e.target.value)}
-                      className="px-2.5 py-1.5 glass-input text-xs text-white w-40"
+                      className="px-2.5 py-1.5 glass-input text-xs text-white w-40 relative z-30"
                       placeholder="ชื่อแสดงผล"
                       autoFocus
                       disabled={updatingName}
                     />
-                    <button type="submit" className="text-[10px] bg-emerald-500 text-black px-2.5 py-1.5 rounded font-bold cursor-pointer" disabled={updatingName}>
+                    <button 
+                      type="submit" 
+                      className="text-[10px] bg-emerald-500 text-black px-2.5 py-1.5 rounded font-bold cursor-pointer relative z-30" 
+                      disabled={updatingName}
+                    >
                       บันทึก
-                    </button>
-                    <button type="button" onClick={() => { setDisplayNameInput(profile.display_name); setEditingName(false); }} className="text-[10px] text-zinc-400 px-1 py-1" disabled={updatingName}>
-                      ยกเลิก
                     </button>
                   </form>
                 ) : (
@@ -386,9 +411,9 @@ export default function ProfilePage() {
                   </div>
                 )}
                 
-                <div className="flex items-center gap-1.5 mt-0.5">
+                <div className="flex items-center gap-1.5 mt-1">
                   <span className="text-xs text-zinc-500 font-semibold uppercase">
-                    สิทธิ์บัญชี: {profile.role === 'admin' ? '🏠 หัวหน้าครอบครัว (Admin)' : '👨‍👩‍👧‍👦 สมาชิกครอบครัว'}
+                    บัญชี: {profile.role === 'admin' ? '🏠 ครอบครัว (Admin)' : '👨‍👩‍👧‍👦 สมาชิกครอบครัว'}
                   </span>
                 </div>
               </div>
@@ -455,13 +480,7 @@ export default function ProfilePage() {
             </div>
 
             {/* Theme Switch Panel */}
-            <div className="glass-card rounded-2xl p-4.5 border border-zinc-800/80 shadow-md flex items-center justify-between">
-              <div className="flex items-center gap-2 text-zinc-300 text-xs font-semibold pl-1">
-                <Palette size={14} className="text-emerald-400" />
-                <span>โหมดสว่าง / โหมดมืด</span>
-              </div>
-              <ThemeToggle />
-            </div>
+            <ThemeToggle variant="card" />
 
             {/* Logout Section */}
             <button
@@ -524,9 +543,9 @@ export default function ProfilePage() {
           <div className="app-modal relative max-w-sm w-full bg-zinc-900 border border-zinc-850 rounded-3xl overflow-hidden shadow-2xl p-6 animate-scale-up">
             
             <div className="flex justify-between items-center mb-4 select-none">
-              <h3 className="text-xs font-bold text-zinc-300 tracking-wider uppercase flex items-center gap-2">
+              <h3 className="text-xs font-bold text-[var(--color-text-secondary)] tracking-wider uppercase flex items-center gap-2">
                 <Key size={14} className="text-emerald-400" />
-                เปลี่ยนรหัสผ่านส่วนตัว 🔑
+                เปลี่ยนรหัสผ่านส่วนตัว 
               </h3>
               <button
                 onClick={() => setActiveSection('profile')}

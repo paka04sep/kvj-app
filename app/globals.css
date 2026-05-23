@@ -7,70 +7,272 @@
   --bg-emerald-glow: rgba(16, 185, 129, 0.08);
   --bg-rose-glow: rgba(244, 63, 94, 0.08);
 
-  /* DEFAULT Theme: Dark Mode */
-  --bg-base: #09090b; /* zinc-950 */
-  --bg-device: rgba(24, 24, 27, 0.4);
-  --bg-panel: rgba(24, 24, 27, 0.65);
-  --bg-card: rgba(30, 30, 36, 0.45);
-  --bg-card-hover: rgba(39, 39, 47, 0.6);
-  --bg-input: rgba(15, 15, 20, 0.6);
-  --text-main: #f4f4f5; /* zinc-100 */
-  --text-muted: #a1a1aa; /* zinc-400 */
-  --border-color: rgba(255, 255, 255, 0.06);
-  --border-hover: rgba(16, 185, 129, 0.2);
+  /* 🌌 MIDNIGHT ZINC (Default Dark) */
+  --color-bg-app: #09090b; /* zinc-950 */
+  --color-bg-device: rgba(24, 24, 27, 0.4);
+  --color-bg-panel: rgba(24, 24, 27, 0.65);
+  --color-bg-card: rgba(30, 30, 36, 0.45);
+  --color-bg-card-hover: rgba(39, 39, 47, 0.6);
+  --color-bg-input: rgba(15, 15, 20, 0.6);
+  
+  --color-text-primary: #f4f4f5; /* zinc-100 */
+  --color-text-secondary: #a1a1aa; /* zinc-400 */
+  
+  --color-border-primary: rgba(255, 255, 255, 0.06);
+  --color-border-hover: rgba(16, 185, 129, 0.2);
+  
   --bg-glow-stops: from-emerald-950/20 via-zinc-950 to-zinc-950;
   --shadow-color: rgba(0, 0, 0, 0.7);
-  --surface-strong: rgba(12, 12, 16, 0.72);
-  --surface-soft: rgba(39, 39, 47, 0.36);
-  --field-bg: rgba(15, 15, 20, 0.78);
-  --income: #34d399;
-  --income-soft: rgba(52, 211, 153, 0.12);
-  --income-border: rgba(52, 211, 153, 0.28);
-  --expense: #fb7185;
-  --expense-soft: rgba(251, 113, 133, 0.12);
-  --expense-border: rgba(251, 113, 133, 0.28);
+  
+  --color-surface-strong: rgba(12, 12, 16, 0.72);
+  --color-surface-soft: rgba(39, 39, 47, 0.36);
+  --color-field-bg: rgba(15, 15, 20, 0.78);
+  
+  --color-status-income: #34d399;
+  --color-status-income-bg: rgba(52, 211, 153, 0.12);
+  --color-status-income-border: rgba(52, 211, 153, 0.28);
+  
+  --color-status-expense: #fb7185;
+  --color-status-expense-bg: rgba(251, 113, 133, 0.12);
+  --color-status-expense-border: rgba(251, 113, 133, 0.28);
    
+  --color-brand-primary: #10b981;
+  --color-brand-primary-dark: #059669;
+  --color-brand-primary-light: #34d399;
 
-  --color-primary: #10b981;
-  --color-primary-dark: #059669;
-  --color-primary-light: #34d399;
+  /* Backward Compatibility Mapping */
+  --bg-base: var(--color-bg-app);
+  --bg-device: var(--color-bg-device);
+  --bg-panel: var(--color-bg-panel);
+  --bg-card: var(--color-bg-card);
+  --bg-card-hover: var(--color-bg-card-hover);
+  --bg-input: var(--color-bg-input);
+  --text-main: var(--color-text-primary);
+  --text-muted: var(--color-text-secondary);
+  --border-color: var(--color-border-primary);
+  --border-hover: var(--color-border-hover);
+  --surface-strong: var(--color-surface-strong);
+  --surface-soft: var(--color-surface-soft);
+  --field-bg: var(--color-field-bg);
+  --income: var(--color-status-income);
+  --income-soft: var(--color-status-income-bg);
+  --income-border: var(--color-status-income-border);
+  --expense: var(--color-status-expense);
+  --expense-soft: var(--color-status-expense-bg);
+  --expense-border: var(--color-status-expense-border);
+  --color-primary: var(--color-brand-primary);
+  --color-primary-dark: var(--color-brand-primary-dark);
+  --color-primary-light: var(--color-brand-primary-light);
 }
 
-html.light {
+html.light, html[data-theme="light"] {
   /* LIGHT Theme Override */
-  --bg-base: #f8fafc; /* slate-50 */
-  --bg-device: rgba(255, 255, 255, 0.65);
-  --bg-panel: rgba(255, 255, 255, 0.85);
-  --bg-card: rgba(241, 245, 249, 0.8); /* slate-100 */
-  --bg-card-hover: rgba(226, 232, 240, 0.9); /* slate-200 */
-  --bg-input: rgba(255, 255, 255, 0.95);
-  --text-main: #0f172a; /* slate-900 */
-  --text-muted: #475569; /* slate-600 */
-  --border-color: rgba(15, 23, 42, 0.08);
-  --border-hover: rgba(16, 185, 129, 0.4);
+  --color-bg-app: #f1f5f9; /* slate-100 */
+  --color-bg-device: rgba(255, 255, 255, 0.65);
+  --color-bg-panel: rgba(255, 255, 255, 0.85);
+  --color-bg-card: rgba(255, 255, 255, 0.95);
+  --color-bg-card-hover: #ffffff;
+  --color-bg-input: rgba(255, 255, 255, 0.95);
+  
+  --color-text-primary: #0f172a; /* slate-900 */
+  --color-text-secondary: #475569; /* slate-600 */
+  
+  --color-border-primary: rgba(15, 23, 42, 0.08);
+  --color-border-hover: rgba(16, 185, 129, 0.4);
+  
   --bg-glow-stops: from-emerald-50/40 via-slate-50 to-slate-100;
   --shadow-color: rgba(15, 23, 42, 0.08);
-  --surface-strong: rgba(255, 255, 255, 0.94);
-  --surface-soft: rgba(248, 250, 252, 0.78);
-  --field-bg: rgba(255, 255, 255, 0.96);
-  --income: #059669;
-  --income-soft: rgba(5, 150, 105, 0.1);
-  --income-border: rgba(5, 150, 105, 0.24);
-  --expense: #e11d48;
-  --expense-soft: rgba(225, 29, 72, 0.09);
-  --expense-border: rgba(225, 29, 72, 0.22);
-   
   
-  --color-primary: #059669;
-  --color-primary-dark: #047857;
-  --color-primary-light: #10b981;
+  --color-surface-strong: rgba(255, 255, 255, 0.94);
+  --color-surface-soft: rgba(248, 250, 252, 0.78);
+  --color-field-bg: rgba(255, 255, 255, 0.96);
+  
+  --color-status-income: #059669;
+  --color-status-income-bg: rgba(5, 150, 105, 0.1);
+  --color-status-income-border: rgba(5, 150, 105, 0.24);
+  
+  --color-status-expense: #e11d48;
+  --color-status-expense-bg: rgba(225, 29, 72, 0.09);
+  --color-status-expense-border: rgba(225, 29, 72, 0.22);
+   
+  --color-brand-primary: #059669;
+  --color-brand-primary-dark: #047857;
+  --color-brand-primary-light: #10b981;
 }
 
-@theme inline {
-  --color-primary: var(--color-primary);
-  --color-primary-dark: var(--color-primary-dark);
-  --color-primary-light: var(--color-primary-light);
+/* 🌲 EARTHY FOREST THEME (เขียวไพรผ่อนคลายดวงตา) */
+html[data-theme="forest"] {
+  --color-bg-app: #121915;
+  --color-bg-device: rgba(20, 32, 26, 0.4);
+  --color-bg-panel: rgba(16, 28, 22, 0.7);
+  --color-bg-card: rgba(24, 40, 32, 0.45);
+  --color-bg-card-hover: rgba(35, 60, 47, 0.6);
+  --color-bg-input: rgba(12, 22, 17, 0.6);
   
+  --color-text-primary: #f0f7f4;
+  --color-text-secondary: #a3b899;
+  
+  --color-border-primary: rgba(76, 175, 80, 0.12);
+  --color-border-hover: rgba(139, 195, 74, 0.3);
+  
+  --bg-glow-stops: from-emerald-950/20 via-[#121915] to-[#121915];
+  --shadow-color: rgba(5, 12, 8, 0.6);
+  
+  --color-surface-strong: rgba(12, 22, 17, 0.72);
+  --color-surface-soft: rgba(35, 60, 47, 0.36);
+  --color-field-bg: rgba(12, 22, 17, 0.78);
+  
+  --color-status-income: #81c784;
+  --color-status-income-bg: rgba(129, 199, 132, 0.12);
+  --color-status-income-border: rgba(129, 199, 132, 0.28);
+  
+  --color-status-expense: #ffb74d;
+  --color-status-expense-bg: rgba(255, 183, 77, 0.12);
+  --color-status-expense-border: rgba(255, 183, 77, 0.28);
+   
+  --color-brand-primary: #81c784;
+  --color-brand-primary-dark: #2e7d32;
+  --color-brand-primary-light: #a5d6a7;
+}
+
+/* ☕ WARM LATTE THEME (กาแฟลาเต้อุ่นๆ สไตล์คาเฟ่นม) */
+html[data-theme="latte"] {
+  --color-bg-app: #181310;
+  --color-bg-device: rgba(34, 25, 20, 0.4);
+  --color-bg-panel: rgba(28, 20, 16, 0.7);
+  --color-bg-card: rgba(42, 30, 24, 0.45);
+  --color-bg-card-hover: rgba(58, 42, 34, 0.6);
+  --color-bg-input: rgba(22, 16, 13, 0.6);
+  
+  --color-text-primary: #fdfaf7;
+  --color-text-secondary: #d2b48c;
+  
+  --color-border-primary: rgba(210, 180, 140, 0.12);
+  --color-border-hover: rgba(244, 164, 96, 0.3);
+  
+  --bg-glow-stops: from-[#2d1b10]/20 via-[#181310] to-[#181310];
+  --shadow-color: rgba(12, 8, 6, 0.65);
+  
+  --color-surface-strong: rgba(22, 16, 13, 0.72);
+  --color-surface-soft: rgba(58, 42, 34, 0.36);
+  --color-field-bg: rgba(22, 16, 13, 0.78);
+  
+  --color-status-income: #e5c290;
+  --color-status-income-bg: rgba(229, 194, 144, 0.12);
+  --color-status-income-border: rgba(229, 194, 144, 0.28);
+  
+  --color-status-expense: #ff8a65;
+  --color-status-expense-bg: rgba(255, 138, 101, 0.12);
+  --color-status-expense-border: rgba(255, 138, 101, 0.28);
+   
+  --color-brand-primary: #d2b48c;
+  --color-brand-primary-dark: #8b5a2b;
+  --color-brand-primary-light: #f5deb3;
+}
+
+/* 🌊 OCEAN TEAL THEME (โทนสีฟ้าน้ำทะเล ปะทะมินต์ผ่อนคลาย) */
+html[data-theme="ocean"] {
+  --color-bg-app: #081116;
+  --color-bg-device: rgba(12, 28, 38, 0.4);
+  --color-bg-panel: rgba(10, 24, 32, 0.7);
+  --color-bg-card: rgba(18, 38, 50, 0.45);
+  --color-bg-card-hover: rgba(26, 54, 70, 0.6);
+  --color-bg-input: rgba(8, 18, 24, 0.6);
+  
+  --color-text-primary: #f0f9ff;
+  --color-text-secondary: #7dd3fc;
+  
+  --color-border-primary: rgba(14, 116, 144, 0.15);
+  --color-border-hover: rgba(56, 189, 248, 0.3);
+  
+  --bg-glow-stops: from-[#032830]/20 via-[#081116] to-[#081116];
+  --shadow-color: rgba(3, 8, 11, 0.6);
+  
+  --color-surface-strong: rgba(8, 18, 24, 0.72);
+  --color-surface-soft: rgba(26, 54, 70, 0.36);
+  --color-field-bg: rgba(8, 18, 24, 0.78);
+  
+  --color-status-income: #2dd4bf;
+  --color-status-income-bg: rgba(45, 212, 191, 0.12);
+  --color-status-income-border: rgba(45, 212, 191, 0.28);
+  
+  --color-status-expense: #f43f5e;
+  --color-status-expense-bg: rgba(244, 63, 94, 0.12);
+  --color-status-expense-border: rgba(244, 63, 94, 0.28);
+   
+  --color-brand-primary: #38bdf8;
+  --color-brand-primary-dark: #0369a1;
+  --color-brand-primary-light: #7dd3fc;
+}
+
+/* 🌸 LAVENDER MIST THEME (โทนสีม่วงไลแลคพาสเทล ฝันดีถนอมสายตา) */
+html[data-theme="lavender"] {
+  --color-bg-app: #110e1a;
+  --color-bg-device: rgba(24, 18, 38, 0.4);
+  --color-bg-panel: rgba(20, 15, 32, 0.7);
+  --color-bg-card: rgba(32, 24, 50, 0.45);
+  --color-bg-card-hover: rgba(46, 34, 72, 0.6);
+  --color-bg-input: rgba(14, 10, 22, 0.6);
+  
+  --color-text-primary: #f5f3ff;
+  --color-text-secondary: #c084fc;
+  
+  --color-border-primary: rgba(139, 92, 246, 0.12);
+  --color-border-hover: rgba(192, 132, 252, 0.3);
+  
+  --bg-glow-stops: from-[#25133d]/20 via-[#110e1a] to-[#110e1a];
+  --shadow-color: rgba(10, 8, 16, 0.65);
+  
+  --color-surface-strong: rgba(14, 10, 22, 0.72);
+  --color-surface-soft: rgba(46, 34, 72, 0.36);
+  --color-field-bg: rgba(14, 10, 22, 0.78);
+  
+  --color-status-income: #a78bfa;
+  --color-status-income-bg: rgba(167, 139, 250, 0.12);
+  --color-status-income-border: rgba(167, 139, 250, 0.28);
+  
+  --color-status-expense: #fda4af;
+  --color-status-expense-bg: rgba(253, 164, 175, 0.12);
+  --color-status-expense-border: rgba(253, 164, 175, 0.28);
+   
+  --color-brand-primary: #c084fc;
+  --color-brand-primary-dark: #7c3aed;
+  --color-brand-primary-light: #d8b4fe;
+}
+
+
+@theme inline {
+  /* โครงสร้างสีเดิมเพื่อ Backward Compatibility */
+  --color-primary: var(--color-brand-primary);
+  --color-primary-dark: var(--color-brand-primary-dark);
+  --color-primary-light: var(--color-brand-primary-light);
+  
+  /* โครงสร้างตัวแปรสีพรีเมียมแบบใหม่ */
+  --color-brand-primary: var(--color-brand-primary);
+  --color-brand-primary-dark: var(--color-brand-primary-dark);
+  --color-brand-primary-light: var(--color-brand-primary-light);
+  
+  --color-bg-app: var(--color-bg-app);
+  --color-bg-device: var(--color-bg-device);
+  --color-bg-panel: var(--color-bg-panel);
+  --color-bg-card: var(--color-bg-card);
+  --color-bg-card-hover: var(--color-bg-card-hover);
+  --color-bg-input: var(--color-bg-input);
+  
+  --color-text-primary: var(--color-text-primary);
+  --color-text-secondary: var(--color-text-secondary);
+  
+  --color-border-primary: var(--color-border-primary);
+  --color-border-hover: var(--color-border-hover);
+  
+  --color-status-income: var(--color-status-income);
+  --color-status-income-bg: var(--color-status-income-bg);
+  --color-status-income-border: var(--color-status-income-border);
+  
+  --color-status-expense: var(--color-status-expense);
+  --color-status-expense-bg: var(--color-status-expense-bg);
+  --color-status-expense-border: var(--color-status-expense-border);
+
   --color-accent-blue: #3b82f6;
   --color-accent-purple: #8b5cf6;
   --color-accent-rose: #f43f5e;
@@ -180,8 +382,8 @@ html.light {
 }
 
 body {
-  background-color: var(--bg-base);
-  color: var(--text-main);
+  background-color: var(--color-bg-app);
+  color: var(--color-text-primary);
   transition: background-color 0.25s ease, color 0.25s ease;
 }
 
@@ -203,92 +405,92 @@ body {
 
 /* Modern Glassmorphic Utilities mapped to Theme Variables */
 .glass-panel {
-  background: var(--bg-panel);
+  background: var(--color-bg-panel);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid var(--border-color);
-  color: var(--text-main);
+  border: 1px solid var(--color-border-primary);
+  color: var(--color-text-primary);
   transition: background-color 0.25s ease, border-color 0.25s ease;
 }
 
 .glass-card {
-  background: var(--bg-card);
+  background: var(--color-bg-card);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  border: 1px solid var(--border-color);
-  color: var(--text-main);
+  border: 1px solid var(--color-border-primary);
+  color: var(--color-text-primary);
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .glass-card:hover {
-  background: var(--bg-card-hover);
-  border-color: var(--border-hover);
+  background: var(--color-bg-card-hover);
+  border-color: var(--color-border-hover);
   transform: translateY(-2px);
   box-shadow: 0 10px 25px -5px var(--shadow-color);
 }
 
 .glass-input {
-  background: var(--bg-input);
-  border: 1px solid var(--border-color);
-  color: var(--text-main);
+  background: var(--color-bg-input);
+  border: 1px solid var(--color-border-primary);
+  color: var(--color-text-primary);
   transition: all 0.2s ease;
 }
 
 .glass-input:focus {
-  border-color: var(--color-primary);
+  border-color: var(--color-brand-primary);
   box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.15);
   outline: none;
 }
 
 .app-surface {
-  background: var(--surface-strong);
-  border: 1px solid var(--border-color);
-  color: var(--text-main);
+  background: var(--color-surface-strong);
+  border: 1px solid var(--color-border-primary);
+  color: var(--color-text-primary);
   transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease, box-shadow 0.25s ease;
 }
 
 .app-surface-soft {
-  background: var(--surface-soft);
-  border: 1px solid var(--border-color);
-  color: var(--text-main);
+  background: var(--color-surface-soft);
+  border: 1px solid var(--color-border-primary);
+  color: var(--color-text-primary);
   transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease, box-shadow 0.25s ease;
 }
 
 .app-field {
-  background: var(--field-bg);
-  border: 1px solid var(--border-color);
-  color: var(--text-main);
+  background: var(--color-field-bg);
+  border: 1px solid var(--color-border-primary);
+  color: var(--color-text-primary);
   transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .app-field::placeholder {
-  color: color-mix(in srgb, var(--text-muted) 68%, transparent);
+  color: color-mix(in srgb, var(--color-text-secondary) 68%, transparent);
 }
 
 .app-field:focus {
-  border-color: var(--color-primary);
+  border-color: var(--color-brand-primary);
   box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.14);
   outline: none;
 }
 
 .amount-income {
-  color: var(--income) !important;
+  color: var(--color-status-income) !important;
 }
 
 .amount-expense {
-  color: var(--expense) !important;
+  color: var(--color-status-expense) !important;
 }
 
 .tone-income {
-  background: var(--income-soft);
-  border-color: var(--income-border);
-  color: var(--income);
+  background: var(--color-status-income-bg);
+  border-color: var(--color-status-income-border);
+  color: var(--color-status-income);
 }
 
 .tone-expense {
-  background: var(--expense-soft);
-  border-color: var(--expense-border);
-  color: var(--expense);
+  background: var(--color-status-expense-bg);
+  border-color: var(--color-status-expense-border);
+  color: var(--color-status-expense);
 }
 
 .nav-pop {
@@ -345,11 +547,11 @@ html.light .text-white:not(.btn-primary):not(.btn-primary *):not([class*="bg-eme
 
 html.light .text-zinc-50:not(.btn-primary):not(.btn-primary *):not([class*="bg-emerald-"]):not([class*="bg-emerald-"] *):not([class*="bg-rose-"]):not([class*="bg-rose-"] *),
 html.light .text-zinc-100:not(.btn-primary):not(.btn-primary *):not([class*="bg-emerald-"]):not([class*="bg-emerald-"] *):not([class*="bg-rose-"]):not([class*="bg-rose-"] *),
-html.light .text-zinc-200:not(.btn-primary):not(.btn-primary *):not([class*="bg-emerald-"]):not([class*="bg-emerald-"] *):not([class*="bg-rose-"]):not([class*="bg-rose-"] *) {
+html.light .text-zinc-200:not(.btn-primary):not(.btn-primary *):not([class*="bg-emerald-"]):not([class*="bg-emerald-"] *):not([class*="bg-rose-"]):not([class*="bg-rose-"] *),
+html.light .text-zinc-300:not(.btn-primary):not(.btn-primary *):not([class*="bg-emerald-"]):not([class*="bg-emerald-"] *):not([class*="bg-rose-"]):not([class*="bg-rose-"] *) {
   color: var(--text-main) !important;
 }
 
-html.light .text-zinc-300:not(.btn-primary):not(.btn-primary *):not([class*="bg-emerald-"]):not([class*="bg-emerald-"] *):not([class*="bg-rose-"]):not([class*="bg-rose-"] *),
 html.light .text-zinc-400:not(.btn-primary):not(.btn-primary *):not([class*="bg-emerald-"]):not([class*="bg-emerald-"] *):not([class*="bg-rose-"]):not([class*="bg-rose-"] *),
 html.light .text-zinc-500:not(.btn-primary):not(.btn-primary *):not([class*="bg-emerald-"]):not([class*="bg-emerald-"] *):not([class*="bg-rose-"]):not([class*="bg-rose-"] *) {
   color: var(--text-muted) !important;
@@ -641,3 +843,117 @@ html.light .father-income-banner .banner-badge {
   border: 1px solid rgba(255, 255, 255, 0.92) !important;
   box-shadow: 0 8px 18px -10px rgba(4, 47, 46, 0.55) !important;
 }
+
+/* ==========================================================================
+   GLOBAL MULTI-THEME CLASS OVERRIDES (ควบคุมสีฮาร์ดโค้ดเมื่อเปลี่ยนธีม)
+   ========================================================================== */
+
+html[data-theme="forest"] body,
+html[data-theme="latte"] body,
+html[data-theme="ocean"] body,
+html[data-theme="lavender"] body {
+  background-color: var(--color-bg-app);
+}
+
+/* 1. Overriding Background zinc/slate classes dynamically */
+html[data-theme="forest"] .bg-zinc-950,
+html[data-theme="latte"] .bg-zinc-950,
+html[data-theme="ocean"] .bg-zinc-950,
+html[data-theme="lavender"] .bg-zinc-950,
+html[data-theme="forest"] .bg-zinc-900,
+html[data-theme="latte"] .bg-zinc-900,
+html[data-theme="ocean"] .bg-zinc-900,
+html[data-theme="lavender"] .bg-zinc-900,
+html[data-theme="forest"] .bg-zinc-950\/80,
+html[data-theme="latte"] .bg-zinc-950\/80,
+html[data-theme="ocean"] .bg-zinc-950\/80,
+html[data-theme="lavender"] .bg-zinc-950\/80,
+html[data-theme="forest"] .bg-zinc-900\/95,
+html[data-theme="latte"] .bg-zinc-900\/95,
+html[data-theme="ocean"] .bg-zinc-900\/95,
+html[data-theme="lavender"] .bg-zinc-900\/95 {
+  background-color: var(--color-bg-panel) !important;
+}
+
+html[data-theme="forest"] .bg-zinc-950\/40,
+html[data-theme="latte"] .bg-zinc-950\/40,
+html[data-theme="ocean"] .bg-zinc-950\/40,
+html[data-theme="lavender"] .bg-zinc-950\/40,
+html[data-theme="forest"] .bg-zinc-900\/40,
+html[data-theme="latte"] .bg-zinc-900\/40,
+html[data-theme="ocean"] .bg-zinc-900\/40,
+html[data-theme="lavender"] .bg-zinc-900\/40,
+html[data-theme="forest"] .bg-zinc-950\/60,
+html[data-theme="latte"] .bg-zinc-950\/60,
+html[data-theme="ocean"] .bg-zinc-950\/60,
+html[data-theme="lavender"] .bg-zinc-950\/60,
+html[data-theme="forest"] .bg-zinc-950\/10,
+html[data-theme="latte"] .bg-zinc-950\/10,
+html[data-theme="ocean"] .bg-zinc-950\/10,
+html[data-theme="lavender"] .bg-zinc-950\/10,
+html[data-theme="forest"] .bg-zinc-950\/20,
+html[data-theme="latte"] .bg-zinc-950\/20,
+html[data-theme="ocean"] .bg-zinc-950\/20,
+html[data-theme="lavender"] .bg-zinc-950\/20 {
+  background-color: var(--color-bg-device) !important;
+}
+
+/* 2. Overriding Border zinc/slate classes dynamically */
+html[data-theme="forest"] .border-zinc-800,
+html[data-theme="latte"] .border-zinc-800,
+html[data-theme="ocean"] .border-zinc-800,
+html[data-theme="lavender"] .border-zinc-800,
+html[data-theme="forest"] .border-zinc-850,
+html[data-theme="latte"] .border-zinc-850,
+html[data-theme="ocean"] .border-zinc-850,
+html[data-theme="lavender"] .border-zinc-850,
+html[data-theme="forest"] .border-zinc-800\/50,
+html[data-theme="latte"] .border-zinc-800\/50,
+html[data-theme="ocean"] .border-zinc-800\/50,
+html[data-theme="lavender"] .border-zinc-800\/50,
+html[data-theme="forest"] .border-zinc-800\/60,
+html[data-theme="latte"] .border-zinc-800\/60,
+html[data-theme="ocean"] .border-zinc-800\/60,
+html[data-theme="lavender"] .border-zinc-800\/60,
+html[data-theme="forest"] .border-zinc-800\/70,
+html[data-theme="latte"] .border-zinc-800\/70,
+html[data-theme="ocean"] .border-zinc-800\/70,
+html[data-theme="lavender"] .border-zinc-800\/70 {
+  border-color: var(--color-border-primary) !important;
+}
+
+/* 3. Overriding Text zinc/slate classes dynamically */
+html[data-theme="forest"] .text-zinc-50,
+html[data-theme="latte"] .text-zinc-50,
+html[data-theme="ocean"] .text-zinc-50,
+html[data-theme="lavender"] .text-zinc-50,
+html[data-theme="forest"] .text-zinc-100,
+html[data-theme="latte"] .text-zinc-100,
+html[data-theme="ocean"] .text-zinc-100,
+html[data-theme="lavender"] .text-zinc-100,
+html[data-theme="forest"] .text-zinc-200,
+html[data-theme="latte"] .text-zinc-200,
+html[data-theme="ocean"] .text-zinc-200,
+html[data-theme="lavender"] .text-zinc-200,
+html[data-theme="forest"] .text-white,
+html[data-theme="latte"] .text-white,
+html[data-theme="ocean"] .text-white,
+html[data-theme="lavender"] .text-white {
+  color: var(--color-text-primary) !important;
+}
+
+html[data-theme="forest"] .text-zinc-300,
+html[data-theme="latte"] .text-zinc-300,
+html[data-theme="ocean"] .text-zinc-300,
+html[data-theme="lavender"] .text-zinc-300,
+html[data-theme="forest"] .text-zinc-400,
+html[data-theme="latte"] .text-zinc-400,
+html[data-theme="ocean"] .text-zinc-400,
+html[data-theme="lavender"] .text-zinc-400,
+html[data-theme="forest"] .text-zinc-500,
+html[data-theme="latte"] .text-zinc-500,
+html[data-theme="ocean"] .text-zinc-500,
+html[data-theme="lavender"] .text-zinc-500 {
+  color: var(--color-text-secondary) !important;
+}
+

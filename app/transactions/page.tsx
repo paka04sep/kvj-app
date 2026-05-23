@@ -344,8 +344,8 @@ export default function TransactionsPage() {
               <div key={group.date} className="space-y-2">
                 <div className="sticky top-0 z-10 flex items-center gap-1.5 border-b border-zinc-800/40 app-surface px-1 py-2 backdrop-blur-md select-none">
                   <CalendarDays size={13} className="shrink-0 text-emerald-400" />
-                  <span className="text-xs font-black tracking-wide text-zinc-300">{group.dateHeader}</span>
-                  <span className="ml-auto font-mono text-[9px] font-bold text-zinc-500">
+                  <span className="text-xs font-black tracking-wide text-[var(--color-text-primary)]">{group.dateHeader}</span>
+                  <span className="ml-auto font-mono text-[9px] font-bold text-[var(--color-text-secondary)]">
                     {group.transactions.length} รายการ
                   </span>
                 </div>
@@ -379,49 +379,48 @@ export default function TransactionsPage() {
                             )}
                           </div>
 
-                          <div className="min-w-0">
-                            <div className="flex items-center gap-2">
-                              <span className="truncate text-sm font-black text-zinc-100 transition-colors group-hover:text-emerald-400">
+                          <div className="min-w-0 flex flex-col gap-0.5">
+                            {/* แถวที่ 1: [user] */}
+                            <span className="rounded border border-emerald-500/10 bg-emerald-500/5 px-1.5 py-0.5 text-[9px] font-extrabold text-emerald-400 w-fit select-none leading-none">
+                              {transaction.profiles?.display_name || 'สมาชิกในบ้าน'}
+                            </span>
+                            
+                            {/* แถวที่ 2: [description] */}
+                            <div className="flex items-center gap-1.5 mt-0.5">
+                              <span className="truncate text-sm font-black text-[var(--color-text-primary)] transition-colors group-hover:text-emerald-400">
                                 {transaction.description}
                               </span>
                               {transaction.receipt_url && (
-                                <span className="shrink-0 rounded border border-emerald-500/10 bg-emerald-500/10 px-1.5 text-[8px] font-black text-emerald-400">
+                                <span className="shrink-0 rounded border border-emerald-500/10 bg-emerald-500/10 px-1.5 text-[8px] font-black text-emerald-400 select-none">
                                   สลิป
                                 </span>
                               )}
                             </div>
-                            <div className="mt-0.5 flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-[10px] text-zinc-500">
-                              <span className="rounded border border-emerald-500/5 bg-emerald-500/5 px-1.5 py-0.5 font-extrabold text-emerald-400">
-                                {transaction.profiles?.display_name || 'สมาชิกในบ้าน'}
-                              </span>
-                              <span className="font-semibold">{timeString}</span>
-                              <span className="text-[9px] font-bold">{transaction.category}</span>
-                            </div>
+
+                            {/* แถวที่ 3: [tag] */}
+                            <span className="text-[9.5px] font-bold text-[var(--color-text-secondary)] opacity-85 select-none mt-0.5">
+                              {transaction.category}
+                            </span>
                           </div>
                         </div>
 
-                        <div className="ml-3 flex shrink-0 items-center gap-3.5">
+                        {/* ฝั่งขวา: จำนวนเงิน และ ย้ายเวลามาอยู่ด้านใต้ */}
+                        <div className="flex flex-col items-end justify-center ml-3 shrink-0 select-none">
                           <span className={`text-sm font-black ${isIncome ? 'amount-income' : 'amount-expense'}`}>
                             {isIncome ? '+' : '-'} ฿
                             {Number(transaction.amount).toLocaleString(undefined, {
                               minimumFractionDigits: 2,
                             })}
                           </span>
-
-                          {currentUserRole === 'admin' ? (
-                            <button
-                              type="button"
-                              onClick={(e) => handleDelete(transaction.id, e)}
-                              className="cursor-pointer rounded-xl p-2 text-zinc-600 opacity-0 transition-all hover:bg-rose-500/10 hover:text-rose-400 focus:opacity-100 group-hover:opacity-100"
-                              title="ลบรายการ"
-                            >
-                              <Trash2 size={13.5} />
-                            </button>
-                          ) : (
-                            <div className="flex h-8 w-8 items-center justify-center text-zinc-600">
-                              <User size={13} className="opacity-30" />
-                            </div>
+                          
+                          {timeString && (
+                            <span className="mt-1 font-mono text-[9px] font-medium text-[var(--color-text-secondary)] opacity-75 flex items-center gap-1">
+                              <Clock size={8.5} className="text-zinc-650 shrink-0"/>
+                              {timeString}
+                            </span>
                           )}
+
+                  
                         </div>
                       </div>
                     )
@@ -436,11 +435,11 @@ export default function TransactionsPage() {
       {selectedTx && (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm">
           <div className="transaction-detail-modal app-modal relative w-full max-w-sm overflow-hidden rounded-3xl border border-zinc-800 bg-zinc-900 p-5 shadow-2xl animate-slide-up">
-            <div className="mb-4 flex items-center justify-between select-none">
-              <h4 className="flex items-center gap-1 text-[10px] font-black uppercase tracking-widest text-zinc-500">
-                <Sparkles size={10} className="text-emerald-400" />
-                รายละเอียดธุรกรรม
-              </h4>
+                  <div className="mb-4 flex items-center justify-between select-none">
+                    <h4 className="flex items-center gap-2 text-[14px] font-black uppercase -tracking-tight text-[var(--color-text-secondary)]">
+                      <Sparkles size={16} className="text-emerald-400" />
+                      รายละเอียดธุรกรรม
+                    </h4>
               <button
                 type="button"
                 onClick={() => setSelectedTx(null)}
@@ -453,7 +452,7 @@ export default function TransactionsPage() {
 
             <div className="space-y-4">
               <div className="rounded-2xl app-surface-soft py-4 text-center shadow-inner">
-                <span className="block text-[9px] font-black uppercase tracking-wider text-zinc-500">
+                <span className="block text-[9px] font-black uppercase tracking-wider text-zinc-600">
                   ยอดธุรกรรม
                 </span>
                 <h3 className={`mt-1 text-3xl font-black ${selectedTx.type === 'income' ? 'amount-income' : 'amount-expense'}`}>
@@ -463,9 +462,10 @@ export default function TransactionsPage() {
               </div>
 
               <div className="space-y-2.5 text-xs">
+                <DetailRow label="ผู้ทำรายการ" value={selectedTx.profiles?.display_name || 'สมาชิกในบ้าน'} />
                 <DetailRow label="คำอธิบาย" value={selectedTx.description} />
                 <DetailRow label="หมวดหมู่" value={selectedTx.category} />
-                <DetailRow label="ผู้ทำรายการ" value={selectedTx.profiles?.display_name || 'สมาชิกในบ้าน'} />
+            
                 <DetailRow
                   label="วันที่"
                   value={new Date(selectedTx.transaction_date).toLocaleDateString('th-TH', {
@@ -485,7 +485,7 @@ export default function TransactionsPage() {
 
               {selectedTx.receipt_url ? (
                 <div className="space-y-1.5">
-                  <span className="text-[9px] font-black uppercase tracking-wide text-zinc-500">
+                  <span className="text-[9px] font-black uppercase tracking-wide">
                     รูปสลิป
                   </span>
                   <div className="relative flex h-56 w-full items-center justify-center overflow-hidden rounded-2xl app-surface-soft shadow-inner">
@@ -525,8 +525,8 @@ export default function TransactionsPage() {
 function DetailRow({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex justify-between border-b border-zinc-800/40 py-1.5">
-      <span className="shrink-0 font-medium text-zinc-500">{label}:</span>
-      <span className="max-w-[210px] truncate text-right font-bold text-zinc-200" title={value}>
+      <span className="shrink-0 font-medium text-[var(--color-text-secondary)]">{label}:</span>
+      <span className="max-w-[210px] truncate text-right font-bold text-[var(--color-text-primary)]" title={value}>
         {value}
       </span>
     </div>

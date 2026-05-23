@@ -314,7 +314,7 @@ export default function Dashboard() {
             {targetFatherIncome > 0 ? (
               <div className="p-3.5 lg:p-4 rounded-2xl father-income-banner text-xs flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
-                  <span className="text-lg">💼</span>
+                  <span className="text-lg">🚗</span>
                   <div>
                     <span className="font-extrabold block banner-title">วันนี้พ่อหาเงินได้ยอดเยี่ยม!</span>
                     <span className="text-[10px] banner-desc">รายได้วันนี้สะสมเข้าบ้าน: <strong className="banner-amount font-black">+฿{targetFatherIncome.toLocaleString()}</strong> บาท</span>

@@ -38,7 +38,26 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="th" className={`${prompt.variable} h-full antialiased`}>
-      <body className="theme-transition flex h-screen h-[100dvh] flex-col items-center justify-center overflow-hidden bg-zinc-950 font-sans text-zinc-50 selection:bg-emerald-500/20 selection:text-emerald-400">
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  var theme = localStorage.getItem('theme') || 'dark';
+                  document.documentElement.setAttribute('data-theme', theme);
+                  if (theme === 'light') {
+                    document.documentElement.classList.add('light');
+                  } else {
+                    document.documentElement.classList.remove('light');
+                  }
+                } catch (e) {}
+              })();
+            `,
+          }}
+        />
+      </head>
+      <body className="theme-transition flex h-screen h-[100dvh] flex-col items-center justify-center overflow-hidden bg-[var(--color-bg-app)] font-sans text-[var(--color-text-primary)] selection:bg-emerald-500/20 selection:text-emerald-400">
         <div className="pointer-events-none fixed inset-0 -z-10 bg-[radial-gradient(ellipse_at_top,_var(--bg-glow-stops))] transition-all duration-350" />
 
         <div className="relative flex h-full w-full max-w-md flex-col overflow-hidden border-x border-zinc-800/50 bg-zinc-900/40 pb-20 shadow-[0_0_50px_rgba(0,0,0,0.8)] backdrop-blur-md transition-all duration-300 md:h-screen md:w-screen md:max-w-none md:border-none md:pb-0 md:shadow-none">
