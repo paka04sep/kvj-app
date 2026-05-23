@@ -3,6 +3,7 @@ import { Prompt } from 'next/font/google'
 import BottomNav from '@/components/BottomNav'
 import DesktopHeader from '@/components/DesktopHeader'
 import QuickTransactionModal from '@/components/QuickTransactionModal'
+import ScanSlipModal from '@/components/ScanSlipModal'
 import './globals.css'
 
 const prompt = Prompt({
@@ -53,6 +54,7 @@ export default function RootLayout({
         </div>
 
         <QuickTransactionModal />
+        <ScanSlipModal />
 
         <script
           dangerouslySetInnerHTML={{

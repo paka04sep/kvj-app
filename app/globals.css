@@ -82,6 +82,7 @@ html.light {
   --animate-slide-up: slide-up 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   --animate-pulse-slow: pulse-slow 3s infinite ease-in-out;
   --animate-confetti: confetti-fall 4s linear infinite;
+  --animate-scanner-bar: scanner-bar 2.2s infinite ease-in-out;
 }
 
 @keyframes fade-in {
@@ -97,6 +98,18 @@ html.light {
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@keyframes scanner-bar {
+  0% {
+    top: 0%;
+  }
+  50% {
+    top: 100%;
+  }
+  100% {
+    top: 0%;
   }
 }
 

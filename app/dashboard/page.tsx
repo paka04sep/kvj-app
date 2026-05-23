@@ -39,7 +39,8 @@ export default function Dashboard() {
   const [profile, setProfile] = useState<Profile | null>(null)
   const [profiles, setProfiles] = useState<Record<string, Profile>>({})
   const [transactions, setTransactions] = useState<Transaction[]>([])
-  
+  const [filterType, setFilterType] = useState<'all' | 'income' | 'expense'>('all')
+
   const [refreshing, setRefreshing] = useState(false)
   const [selectedDate, setSelectedDate] = useState('')
   const [currentTime, setCurrentTime] = useState('')
@@ -260,9 +261,20 @@ export default function Dashboard() {
           {/* Daily KPI Summary for Selected Day */}
           <div className="grid grid-cols-2 gap-2.5 lg:gap-3.5 shrink-0">
             {/* Income */}
-            <div className="glass-card rounded-2xl py-2.5 px-3.5 lg:p-4 border border-zinc-850 flex flex-col justify-between shadow-lg relative overflow-hidden group hover:border-emerald-500/20 transition-all duration-300">
+            <button
+              type="button"
+              onClick={() => setFilterType(f => f === 'income' ? 'all' : 'income')}
+              className={`glass-card rounded-2xl py-2.5 px-3.5 lg:p-4 flex flex-col justify-between shadow-lg relative overflow-hidden group transition-all duration-300 cursor-pointer text-left ${
+                filterType === 'income'
+                  ? 'border-2 border-emerald-400/60 ring-2 ring-emerald-400/15 scale-[1.02]'
+                  : 'border border-zinc-850 hover:border-emerald-500/20'
+              }`}
+            >
               <div className="flex justify-between items-center mb-0.5 lg:mb-1 select-none">
-                <span className="text-[9px] font-black text-zinc-400 tracking-wider uppercase">รายรับวันนี้</span>
+                <span className="text-[9px] font-black text-zinc-400 tracking-wider uppercase flex items-center gap-1">
+                  {filterType === 'income' && <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />}
+                  รายรับวันนี้
+                </span>
                 <span className="text-[8px] bg-emerald-500/10 text-emerald-400 font-extrabold px-2 py-0.5 rounded-full border border-emerald-500/5">
                   +{selectedDayTransactions.filter(t => t.type === 'income').length} รายการ
                 </span>
@@ -270,12 +282,23 @@ export default function Dashboard() {
               <span className="text-base lg:text-lg font-black text-emerald-400 tracking-tight block">
                 ฿{selectedDayIncome.toLocaleString(undefined, { minimumFractionDigits: 2 })}
               </span>
-            </div>
+            </button>
 
             {/* Expense */}
-            <div className="glass-card rounded-2xl py-2.5 px-3.5 lg:p-4 border border-zinc-850 flex flex-col justify-between shadow-lg relative overflow-hidden group hover:border-rose-500/20 transition-all duration-300">
+            <button
+              type="button"
+              onClick={() => setFilterType(f => f === 'expense' ? 'all' : 'expense')}
+              className={`glass-card rounded-2xl py-2.5 px-3.5 lg:p-4 flex flex-col justify-between shadow-lg relative overflow-hidden group transition-all duration-300 cursor-pointer text-left ${
+                filterType === 'expense'
+                  ? 'border-2 border-rose-400/60 ring-2 ring-rose-400/15 scale-[1.02]'
+                  : 'border border-zinc-850 hover:border-rose-500/20'
+              }`}
+            >
               <div className="flex justify-between items-center mb-0.5 lg:mb-1 select-none">
-                <span className="text-[9px] font-black text-zinc-400 tracking-wider uppercase">รายจ่ายวันนี้</span>
+                <span className="text-[9px] font-black text-zinc-400 tracking-wider uppercase flex items-center gap-1">
+                  {filterType === 'expense' && <span className="inline-block w-1.5 h-1.5 rounded-full bg-rose-400 animate-pulse" />}
+                  รายจ่ายวันนี้
+                </span>
                 <span className="text-[8px] bg-rose-500/10 text-rose-400 font-extrabold px-2 py-0.5 rounded-full border border-rose-500/5">
                   -{selectedDayTransactions.filter(t => t.type === 'expense').length} รายการ
                 </span>
@@ -283,7 +306,7 @@ export default function Dashboard() {
               <span className="text-base lg:text-lg font-black amount-expense tracking-tight block">
                 ฿{selectedDayExpense.toLocaleString(undefined, { minimumFractionDigits: 2 })}
               </span>
-            </div>
+            </button>
           </div>
 
           {/* Father's Encouraging banner */}
@@ -326,14 +349,21 @@ export default function Dashboard() {
                 แสดงธุรกรรมของ: {new Date(selectedDate).toLocaleDateString('th-TH', { day: 'numeric', month: 'long', year: 'numeric' })}
               </p>
             </div>
-            <span className="text-[8px] px-2 py-0.5 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/10 rounded-full font-bold uppercase tracking-wider animate-pulse-slow">
-              อัปเดตสด
-            </span>
+            <div className="flex items-center gap-1.5">
+            
+              <span className="text-[8px] px-2 py-0.5 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/10 rounded-full font-bold uppercase tracking-wider animate-pulse-slow">
+                อัปเดตสด
+              </span>
+            </div>
           </div>
 
           {/* Scrollable feed box */}
           <div className="flex-1 lg:overflow-y-auto pr-1 mt-3 lg:mt-4 space-y-3.5 divide-y divide-zinc-850/40 min-h-0 w-full overflow-y-auto">
-            {selectedDayTransactions.length === 0 ? (
+            {(() => {
+              const filteredTransactions = filterType === 'all'
+                ? selectedDayTransactions
+                : selectedDayTransactions.filter(t => t.type === filterType)
+              return filteredTransactions.length === 0 ? (
               <div className="py-20 text-center flex flex-col items-center justify-center text-zinc-500">
                 <AlertCircle size={36} className="text-zinc-750 mb-3" />
                 <p className="text-xs font-bold">ยังไม่มีรายการบันทึกสำหรับวันนี้</p>
@@ -349,7 +379,7 @@ export default function Dashboard() {
                 </button>
               </div>
             ) : (
-              selectedDayTransactions.map((t, idx) => {
+              filteredTransactions.map((t, idx) => {
                 const timeString = t.created_at
                   ? new Date(t.created_at).toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' }) + ' น.'
                   : ''
@@ -420,7 +450,8 @@ export default function Dashboard() {
                   </div>
                 )
               })
-            )}
+            )
+            })()}
           </div>
         </div>
 

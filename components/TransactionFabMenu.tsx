@@ -34,6 +34,12 @@ const openTransactionModal = (type: TransactionType) => {
   )
 }
 
+const openScanSlipModal = () => {
+  window.dispatchEvent(
+    new CustomEvent('open-scan-slip-modal')
+  )
+}
+
 export default function TransactionFabMenu({ variant = 'mobile' }: TransactionFabMenuProps) {
   const [menuStatus, setMenuStatus] = useState<MenuStatus>('closed')
   const menuRef = useRef<HTMLDivElement>(null)
@@ -95,6 +101,11 @@ export default function TransactionFabMenu({ variant = 'mobile' }: TransactionFa
     openTransactionModal(type)
   }
 
+  const handleSelectScan = () => {
+    closeMenu()
+    openScanSlipModal()
+  }
+
   if (isDesktop) {
     return (
       <div ref={menuRef} className="relative mx-1">
@@ -109,11 +120,10 @@ export default function TransactionFabMenu({ variant = 'mobile' }: TransactionFa
             />
             <DesktopAction
               label="Scan Slip"
-              caption="เร็ว ๆ นี้"
+              caption="สแกนสลิปด้วย AI"
               icon={ScanLine}
-              className="cursor-not-allowed text-cyan-200/65"
-              disabled
-              onClick={() => undefined}
+              className="text-cyan-200 hover:bg-cyan-500/12"
+              onClick={handleSelectScan}
             />
             <DesktopAction
               label="รายรับ"
@@ -189,9 +199,8 @@ export default function TransactionFabMenu({ variant = 'mobile' }: TransactionFa
               icon={ScanLine}
               tone="slip"
               className="left-1/2 top-[5.2rem] -translate-x-1/2"
-              disabled
               style={{ animationDelay: '0ms' }}
-              onClick={() => undefined}
+              onClick={handleSelectScan}
             />
 
             <MobileAction

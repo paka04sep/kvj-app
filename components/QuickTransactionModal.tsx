@@ -38,6 +38,7 @@ export default function QuickTransactionModal() {
 
   const supabase = createClient()
   const amountInputRef = useRef<HTMLInputElement>(null)
+  const isIncomingScanRef = useRef(false)
 
   const defaultIncomeCategories = ['รายได้รายวัน', 'รายได้เสริม', 'อื่นๆ']
   const defaultExpenseCategories = [
@@ -70,28 +71,64 @@ export default function QuickTransactionModal() {
 
   useEffect(() => {
     const handleOpenModal = (event: Event) => {
-      const customEvent = event as CustomEvent<{ type?: TransactionType }>
+      const customEvent = event as CustomEvent<{
+        type?: TransactionType
+        amount?: string
+        description?: string
+        category?: string
+        date?: string
+        imageFile?: File | null
+        imagePreview?: string | null
+      }>
       const initialType = customEvent.detail?.type || 'expense'
 
       setActiveTab(initialType)
-      setDate(new Date().toISOString().split('T')[0])
+      setDate(customEvent.detail?.date || new Date().toISOString().split('T')[0])
 
       const initialCategories = initialType === 'income' ? incomeCats : expenseCats
-      const initialCategory = initialCategories[0] || ''
-      setCategory(initialCategory)
-
-      const defaultDescriptions: Record<string, string> = {
-        'รายได้รายวัน': 'วันนี้มีรายได้รายวันเข้าบ้าน',
-        'รายได้เสริม': 'วันนี้มีรายได้เสริมเข้าบ้าน',
-        'อื่นๆ_income': 'รายรับของครอบครัว',
-        'ค่าข้าว': 'จ่ายค่าข้าว',
-        'ค่าไปโรงเรียนน้อง': 'ให้เงินน้องไปโรงเรียน',
-        'อื่นๆ_expense': 'รายจ่ายของครอบครัว',
+      const initialCategory = customEvent.detail?.category || initialCategories[0] || ''
+      
+      if (customEvent.detail?.category) {
+        isIncomingScanRef.current = true
+        setCategory(customEvent.detail.category)
+      } else {
+        setCategory(initialCategory)
       }
 
-      const key = initialCategory === 'อื่นๆ' ? `${initialCategory}_${initialType}` : initialCategory
-      const initialDesc = defaultDescriptions[key] || (initialType === 'income' ? 'รายรับของครอบครัว' : 'รายจ่ายของครอบครัว')
-      setDescription(initialDesc)
+      if (customEvent.detail?.amount) {
+        setAmount(customEvent.detail.amount)
+      } else {
+        setAmount('')
+      }
+
+      if (customEvent.detail?.description) {
+        setDescription(customEvent.detail.description)
+      } else {
+        const defaultDescriptions: Record<string, string> = {
+          'รายได้รายวัน': 'วันนี้มีรายได้รายวันเข้าบ้าน',
+          'รายได้เสริม': 'วันนี้มีรายได้เสริมเข้าบ้าน',
+          'อื่นๆ_income': 'รายรับของครอบครัว',
+          'ค่าข้าว': 'จ่ายค่าข้าว',
+          'ค่าไปโรงเรียนน้อง': 'ให้เงินน้องไปโรงเรียน',
+          'อื่นๆ_expense': 'รายจ่ายของครอบครัว',
+        }
+
+        const key = initialCategory === 'อื่นๆ' ? `${initialCategory}_${initialType}` : initialCategory
+        const initialDesc = defaultDescriptions[key] || (initialType === 'income' ? 'รายรับของครอบครัว' : 'รายจ่ายของครอบครัว')
+        setDescription(initialDesc)
+      }
+
+      if (customEvent.detail?.imageFile) {
+        setImageFile(customEvent.detail.imageFile)
+      } else {
+        setImageFile(null)
+      }
+
+      if (customEvent.detail?.imagePreview) {
+        setImagePreview(customEvent.detail.imagePreview)
+      } else {
+        setImagePreview(null)
+      }
 
       setIsOpen(true)
       setErrorMsg(null)
@@ -106,9 +143,13 @@ export default function QuickTransactionModal() {
     return () => {
       window.removeEventListener('open-transaction-modal', handleOpenModal)
     }
-  }, [fetchCustomCategories])
+  }, [fetchCustomCategories, incomeCats, expenseCats])
 
   useEffect(() => {
+    if (isIncomingScanRef.current) {
+      isIncomingScanRef.current = false
+      return
+    }
     setCategory(activeCategories[0] || '')
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab, customCategories])
