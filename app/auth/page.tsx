@@ -50,7 +50,7 @@ export default function AuthPage() {
     <div className="flex flex-1 flex-col justify-center py-6 animate-fade-in sm:py-12">
       <div className="mb-8 flex w-full flex-col items-center text-center">
         <div className="relative mb-4 flex h-20 w-20 items-center justify-center overflow-hidden rounded-3xl border border-zinc-800 bg-zinc-950 shadow-2xl">
-          <Image src="/icon.svg" alt="KVJ Logo" fill className="p-3" priority />
+          <Image src="/main_icon.svg" alt="KVJ Logo" fill className="p-3" priority />
         </div>
         <h1 className="text-2xl font-bold tracking-tight text-white sm:text-3xl">
           KVJ Family Space
