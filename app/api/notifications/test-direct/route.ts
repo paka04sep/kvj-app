@@ -27,21 +27,18 @@ export async function GET(req: Request) {
       }, { status: 400 });
     }
 
-    // 1. Fetch active push subscriptions registered for this user ID
+    // 1. Fetch active push subscriptions registered for this user ID via secure RPC (bypasses RLS)
     const { data: subscriptions, error } = await supabase
-      .from('push_subscriptions')
-      .select('*')
-      .eq('user_id', userId);
+      .rpc('get_user_push_subscriptions', { p_user_id: userId });
 
     if (error) {
       return NextResponse.json({ success: false, error: error.message }, { status: 500 });
     }
 
     if (!subscriptions || subscriptions.length === 0) {
-      // Fetch profiles in this database to help identify user ID / database mismatches
+      // Fetch profiles in this database via secure RPC (bypasses RLS) to help identify mismatches
       const { data: dbProfiles } = await supabase
-        .from('profiles')
-        .select('id, display_name');
+        .rpc('get_active_profiles');
 
       const isUserInDb = dbProfiles && dbProfiles.some((p: any) => p.id === userId);
 
