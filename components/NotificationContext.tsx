@@ -103,16 +103,14 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
 
       if (!profileData || !profileData.family_id) return;
 
-      // Insert real system notification. 
-      // Setting actor_id = null maps it to EVERYONE in the family (including the triggering user)
-      // and immediately fires the DB webhook to trigger Web Push notification alerts on closed devices!
-      const { error: dbError } = await supabase
-        .from('notifications')
-        .insert({
-          family_id: profileData.family_id,
-          actor_id: null, 
-          action_type: 'auto_system_reminder',
-          metadata: {
+      // Call secure Database RPC function to create real system notification in DB.
+      // This maps it to user_notifications for ALL family members
+      // and automatically triggers PWA Web Push notifications to all active devices!
+      const { data: newNotiId, error: dbError } = await supabase
+        .rpc('create_system_notification', {
+          p_family_id: profileData.family_id,
+          p_action_type: 'auto_system_reminder',
+          p_metadata: {
             category: title,
             description: body,
             receiver_name: icon,
@@ -121,7 +119,9 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
         });
 
       if (dbError) {
-        console.error('Error inserting real system notification:', dbError);
+        console.error('Error inserting real system notification via RPC:', dbError);
+      } else {
+        console.log('Successfully triggered system notification in DB:', newNotiId);
       }
     } catch (e) {
       console.error('Error triggering autoRules system notification:', e);
@@ -351,160 +351,105 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
     }
   };
 
-  // Auth State change hook: cleanly handles login registration, teardown and dynamic subscriptions
+  // Auth State Listener Effect: list auth session and set userId, completely side-effect free of Realtime triggers
   useEffect(() => {
-    let channel: any;
+    let authSubscription: any;
 
-    const setupAuthAndRealtime = async () => {
-      // 1. Check if user already exists on mount
+    const setupAuth = async () => {
+      // 1. Initial session load
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
         setUserId(user.id);
         await fetchNotificationsForUser(user.id);
-        
-        channel = supabase
-          .channel(`realtime:user_notifications:${user.id}`)
-          .on(
-            'postgres_changes',
-            {
-              event: 'INSERT',
-              schema: 'public',
-              table: 'user_notifications',
-              filter: `user_id=eq.${user.id}`,
-            },
-            async (payload) => {
-              const { data: fullDetails, error } = await supabase
-                .from('user_notifications')
-                .select(`
-                  id,
-                  is_read,
-                  created_at,
-                  notifications (
-                    id,
-                    action_type,
-                    metadata,
-                    created_at,
-                    profiles:actor_id (
-                      display_name,
-                      avatar_url
-                    )
-                  )
-                `)
-                .eq('id', payload.new.id)
-                .single();
-
-              if (!error && fullDetails) {
-                const newNoti = fullDetails as any;
-                setNotifications(prev => {
-                  if (prev.some(n => n.id === newNoti.id)) return prev;
-                  return [newNoti, ...prev];
-                });
-
-                const details = newNoti.notifications;
-                if (details) {
-                  const textInfo = getNotificationText(
-                    details.action_type,
-                    details.profiles?.display_name,
-                    details.metadata
-                  );
-                  addToast(textInfo.title, textInfo.body, textInfo.icon, textInfo.theme);
-                }
-              }
-            }
-          )
-          .subscribe();
       } else {
         setUserId(null);
         setNotifications([]);
         setLoading(false);
       }
 
-      // 2. Listen to dynamic auth events (login/logout)
-      const { data: { subscription: authSubscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-        const user = session?.user;
-        if (user) {
-          setUserId(user.id);
-          await fetchNotificationsForUser(user.id);
-
-          // Rebuild dynamic channel
-          if (channel) supabase.removeChannel(channel);
-          
-          channel = supabase
-            .channel(`realtime:user_notifications:${user.id}`)
-            .on(
-              'postgres_changes',
-              {
-                event: 'INSERT',
-                schema: 'public',
-                table: 'user_notifications',
-                filter: `user_id=eq.${user.id}`,
-              },
-              async (payload) => {
-                const { data: fullDetails, error } = await supabase
-                  .from('user_notifications')
-                  .select(`
-                    id,
-                    is_read,
-                    created_at,
-                    notifications (
-                      id,
-                      action_type,
-                      metadata,
-                      created_at,
-                      profiles:actor_id (
-                        display_name,
-                        avatar_url
-                      )
-                    )
-                  `)
-                  .eq('id', payload.new.id)
-                  .single();
-
-                if (!error && fullDetails) {
-                  const newNoti = fullDetails as any;
-                  setNotifications(prev => {
-                    if (prev.some(n => n.id === newNoti.id)) return prev;
-                    return [newNoti, ...prev];
-                  });
-
-                  const details = newNoti.notifications;
-                  if (details) {
-                    const textInfo = getNotificationText(
-                      details.action_type,
-                      details.profiles?.display_name,
-                      details.metadata
-                    );
-                    addToast(textInfo.title, textInfo.body, textInfo.icon, textInfo.theme);
-                  }
-                }
-              }
-            )
-            .subscribe();
+      // 2. Dynamic listener for sign-in/out
+      const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+        const currentUser = session?.user;
+        if (currentUser) {
+          setUserId(currentUser.id);
+          await fetchNotificationsForUser(currentUser.id);
         } else {
-          // Teardown everything instantly on logout/session expiry
           setUserId(null);
           setNotifications([]);
           setLoading(false);
-          if (channel) {
-            supabase.removeChannel(channel);
-            channel = null;
-          }
         }
       });
 
-      return () => {
-        authSubscription.unsubscribe();
-        if (channel) supabase.removeChannel(channel);
-      };
+      authSubscription = subscription;
     };
 
-    let cleanupPromise = setupAuthAndRealtime();
+    setupAuth();
+
     return () => {
-      cleanupPromise.then(cleanup => {
-        if (cleanup) cleanup();
-      });
+      if (authSubscription) authSubscription.unsubscribe();
     };
   }, []);
+
+  // Isolated Realtime Subscription Effect: Subscribes to exactly one channel when userId is set, and CLEANLY cleans up on teardown!
+  useEffect(() => {
+    if (!userId) return;
+
+    const channel = supabase
+      .channel(`realtime:user_notifications:${userId}`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'user_notifications',
+          filter: `user_id=eq.${userId}`,
+        },
+        async (payload) => {
+          const { data: fullDetails, error } = await supabase
+            .from('user_notifications')
+            .select(`
+              id,
+              is_read,
+              created_at,
+              notifications (
+                id,
+                action_type,
+                metadata,
+                created_at,
+                profiles:actor_id (
+                  display_name,
+                  avatar_url
+                )
+              )
+            `)
+            .eq('id', payload.new.id)
+            .single();
+
+          if (!error && fullDetails) {
+            const newNoti = fullDetails as any;
+            setNotifications(prev => {
+              if (prev.some(n => n.id === newNoti.id)) return prev;
+              return [newNoti, ...prev];
+            });
+
+            const details = newNoti.notifications;
+            if (details) {
+              const textInfo = getNotificationText(
+                details.action_type,
+                details.profiles?.display_name,
+                details.metadata
+              );
+              addToast(textInfo.title, textInfo.body, textInfo.icon, textInfo.theme);
+            }
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [userId]);
 
   // background loop polling checks triggered only when authenticated user exists
   useEffect(() => {
