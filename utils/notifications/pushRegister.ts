@@ -41,8 +41,17 @@ export async function registerPushNotifications() {
       return;
     }
 
-    // 2. Register/Get Service Worker registration directly (bypasses .ready promise hangs completely!)
-    const registration = await navigator.serviceWorker.register('/sw.js');
+    // 2. Wait for Service Worker to be ready (with safety timeout)
+    await navigator.serviceWorker.register('/sw.js');
+
+    const swTimeout = new Promise((_, reject) => 
+      setTimeout(() => reject(new Error('ระบบหลังบ้าน (Service Worker) เปิดใช้งานช้าเกินไป กรุณารีเฟรชหน้าจอใหม่อีกครั้ง')), 4500)
+    );
+
+    const registration = await Promise.race([
+      navigator.serviceWorker.ready,
+      swTimeout
+    ]) as ServiceWorkerRegistration;
     
     // 3. Retrieve VAPID public key
     const publicVapidKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;

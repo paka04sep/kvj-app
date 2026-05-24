@@ -2,8 +2,8 @@ const CACHE_NAME = 'kvj-family-cache-v1';
 const ASSETS_TO_CACHE = [
   '/',
   '/manifest.json',
-  '/icon-192.png',
-  '/icon-512.png',
+  '/main_icon_192x192.png',
+  '/main_icon_512x512.png',
   '/icon.svg'
 ];
 
