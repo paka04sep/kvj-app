@@ -146,9 +146,9 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{
             __html: `
               if ('serviceWorker' in navigator) {
-                window.addEventListener('load', function() {
-                  navigator.serviceWorker.register('/sw.js').catch(function() {});
-                });
+                navigator.serviceWorker.register('/sw.js')
+                  .then(function() { console.log('Service Worker registered successfully'); })
+                  .catch(function(e) { console.error('Service Worker registration failed:', e); });
               }
             `,
           }}
