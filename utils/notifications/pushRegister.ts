@@ -34,6 +34,10 @@ export async function registerPushNotifications() {
 
     if (permission !== 'granted') {
       console.log('Push notification permission denied or not granted yet');
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('kvj_push_registration_status', 'failed');
+        localStorage.setItem('kvj_push_registration_error', 'คุณปฏิเสธหรือยังไม่อนุญาตสิทธิ์แจ้งเตือนในระบบเบราว์เซอร์ (Notification Permission Denied)');
+      }
       return;
     }
 
@@ -44,27 +48,46 @@ export async function registerPushNotifications() {
     const publicVapidKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
     if (!publicVapidKey) {
       console.warn('VAPID public key is missing in environment variables');
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('kvj_push_registration_status', 'failed');
+        localStorage.setItem('kvj_push_registration_error', 'VAPID public key is missing in environment variables (ไม่ได้ตั้งค่า VAPID Key บนระบบเซิร์ฟเวอร์)');
+      }
       return;
     }
 
-    // 4. Subscribe with the push manager
+    // 4. Clear/Unsubscribe any existing subscription first to prevent VAPID mismatch DOMExceptions
+    try {
+      const existingSub = await registration.pushManager.getSubscription();
+      if (existingSub) {
+        console.log('Unsubscribing old/cached subscription to register fresh token...');
+        await existingSub.unsubscribe();
+      }
+    } catch (unsubErr) {
+      console.warn('Failed to unsubscribe old token, proceeding anyway:', unsubErr);
+    }
+
+    // 5. Subscribe with the push manager
     const subscription = await registration.pushManager.subscribe({
       userVisibleOnly: true,
       applicationServerKey: urlBase64ToUint8Array(publicVapidKey)
     });
 
-    // 5. Extract keys and auth token
+    // 6. Extract keys and auth token
     const key = subscription.getKey('p256dh');
     const auth = subscription.getKey('auth');
     if (!key || !auth) {
       console.error('Failed to get subscription keys');
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('kvj_push_registration_status', 'failed');
+        localStorage.setItem('kvj_push_registration_error', 'Failed to retrieve cryptographic subscription keys from browser PushManager.');
+      }
       return;
     }
 
     const p256dhStr = btoa(String.fromCharCode.apply(null, Array.from(new Uint8Array(key))));
     const authStr = btoa(String.fromCharCode.apply(null, Array.from(new Uint8Array(auth))));
 
-    // 6. Save the subscription record securely via RPC (bypasses direct client-side RLS conflicts)
+    // 7. Save the subscription record securely via RPC (bypasses direct client-side RLS conflicts)
     const { error } = await supabase.rpc('save_push_subscription', {
       p_endpoint: subscription.endpoint,
       p_p256dh: p256dhStr,
@@ -73,11 +96,23 @@ export async function registerPushNotifications() {
 
     if (error) {
       console.error('Error saving push subscription to database via RPC:', error);
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('kvj_push_registration_status', 'failed');
+        localStorage.setItem('kvj_push_registration_error', `Database RPC error: ${error.message}`);
+      }
     } else {
       console.log('Web Push subscription registered successfully in Supabase via RPC!');
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('kvj_push_registration_error');
+        localStorage.setItem('kvj_push_registration_status', 'success');
+      }
     }
 
-  } catch (err) {
+  } catch (err: any) {
     console.error('Failed to register push subscription:', err);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('kvj_push_registration_status', 'failed');
+      localStorage.setItem('kvj_push_registration_error', err.message || String(err));
+    }
   }
 }

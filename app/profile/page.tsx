@@ -26,6 +26,15 @@ export default function ProfilePage() {
   const [profile, setProfile] = useState<Profile | null>(null)
   const [isNotificationsEnabled, setIsNotificationsEnabled] = useState(true)
   const [activeSection, setActiveSection] = useState<'profile' | 'security' | 'admin'>('profile')
+  const [pushStatus, setPushStatus] = useState<string | null>(null)
+  const [pushError, setPushError] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setPushStatus(localStorage.getItem('kvj_push_registration_status'))
+      setPushError(localStorage.getItem('kvj_push_registration_error'))
+    }
+  }, [])
   
   // Password change states
   const [newPassword, setNewPassword] = useState('')
@@ -528,27 +537,49 @@ export default function ProfilePage() {
             <ThemeToggle variant="card" />
 
             {/* Single Notification Switch Toggle Card */}
-            <div className="w-full glass-card rounded-2xl p-4.5 border border-zinc-800/80 shadow-md flex items-center justify-between text-left select-none">
-              <div className="flex items-center gap-2 text-zinc-400 text-xs font-black pl-1">
-                <Bell size={15} className="text-emerald-400 shrink-0" />
-                <span>การแจ้งเตือนระบบ</span>
-              </div>
-              <button
-                type="button"
-                onClick={handleToggleNotifications}
-                className={`relative inline-flex h-5.5 w-10.5 shrink-0 cursor-pointer rounded-full border border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                  isNotificationsEnabled ? 'bg-emerald-500' : 'bg-zinc-800'
-                }`}
-                role="switch"
-                aria-checked={isNotificationsEnabled}
-              >
-                <span
-                  aria-hidden="true"
-                  className={`pointer-events-none inline-block h-4.5 w-4.5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${
-                    isNotificationsEnabled ? 'translate-x-5' : 'translate-x-0'
+            <div className="w-full glass-card rounded-2xl p-4.5 border border-zinc-800/80 shadow-md text-left select-none space-y-3.5">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2 text-zinc-400 text-xs font-black pl-1">
+                  <Bell size={15} className="text-emerald-400 shrink-0" />
+                  <span>การแจ้งเตือนระบบ</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleToggleNotifications}
+                  className={`relative inline-flex h-5.5 w-10.5 shrink-0 cursor-pointer rounded-full border border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                    isNotificationsEnabled ? 'bg-emerald-500' : 'bg-zinc-800'
                   }`}
-                />
-              </button>
+                  role="switch"
+                  aria-checked={isNotificationsEnabled}
+                >
+                  <span
+                    aria-hidden="true"
+                    className={`pointer-events-none inline-block h-4.5 w-4.5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${
+                      isNotificationsEnabled ? 'translate-x-5' : 'translate-x-0'
+                    }`}
+                  />
+                </button>
+              </div>
+
+              {/* PWA Push Notification Status Display */}
+              <div className="border-t border-zinc-800/60 pt-3 space-y-1.5 pl-1">
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] text-zinc-500 font-bold">สถานะสิทธิ์บนเครื่องนี้:</span>
+                  {pushStatus === 'success' ? (
+                    <span className="text-[9px] bg-emerald-500/10 text-emerald-400 px-1.5 py-0.5 rounded font-black">เปิดสำเร็จ 🟢</span>
+                  ) : pushStatus === 'failed' ? (
+                    <span className="text-[9px] bg-rose-500/10 text-rose-400 px-1.5 py-0.5 rounded font-black">สมัครล้มเหลว 🔴</span>
+                  ) : (
+                    <span className="text-[9px] bg-zinc-800 text-zinc-400 px-1.5 py-0.5 rounded font-black">รอดำเนินการ / สแกนสิทธิ์ ⏳</span>
+                  )}
+                </div>
+                {pushError && (
+                  <div className="text-[9px] text-rose-400 leading-relaxed font-semibold bg-rose-950/20 border border-rose-900/30 p-2.5 rounded-xl mt-1 select-text">
+                    <p className="font-bold text-[10px] text-rose-300 mb-0.5">⚠️ ข้อความวิเคราะห์ความผิดพลาด:</p>
+                    <p>{pushError}</p>
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* Logout Section */}
