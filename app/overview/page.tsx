@@ -54,6 +54,16 @@ export default function OverviewPage() {
   const [showAddModal, setShowAddModal] = useState(false)
   const [showEditModal, setShowEditModal] = useState(false)
   
+  // Helper to get today's date but in the next month
+  const getNextMonthTodayDateStr = () => {
+    const d = new Date()
+    d.setMonth(d.getMonth() + 1)
+    const year = d.getFullYear()
+    const monthNum = String(d.getMonth() + 1).padStart(2, '0')
+    const dayNum = String(d.getDate()).padStart(2, '0')
+    return `${year}-${monthNum}-${dayNum}`
+  }
+
   // CRUD Form States
   const [obId, setObId] = useState('')
   const [obName, setObName] = useState('')
@@ -399,9 +409,9 @@ export default function OverviewPage() {
     if (isNaN(amountNum) || amountNum <= 0) return
 
     try {
-      const firstDayOfMonth = `${selectedMonth}-01`
       const parsedDate = new Date(obDueDate)
       const dueDay = parsedDate.getDate()
+      const firstDayOfMonth = `${selectedMonth}-01`
       
       const userProfile = profiles[currentUser?.id]
       const familyId = userProfile?.family_id || 'd7715b74-124b-48c0-82cc-49d609dbb184'
@@ -1150,7 +1160,7 @@ export default function OverviewPage() {
                 onClick={() => {
                   setObName('')
                   setObAmount('')
-                  setObDueDate(`${selectedMonth}-01`)
+                  setObDueDate(getNextMonthTodayDateStr())
                   setObIsRecurring(false)
                   setShowAddModal(true)
                 }}
@@ -1224,7 +1234,7 @@ export default function OverviewPage() {
                     onClick={() => {
                       setObName('')
                       setObAmount('')
-                      setObDueDate(`${selectedMonth}-01`)
+                      setObDueDate(getNextMonthTodayDateStr())
                       setObIsRecurring(false)
                       setShowAddModal(true)
                     }}
@@ -1482,15 +1492,10 @@ export default function OverviewPage() {
                 <input
                   type="date"
                   required
-                  min={dateInputMin}
-                  max={dateInputMax}
                   value={obDueDate}
                   onChange={(e) => setObDueDate(e.target.value)}
                   className="glass-input w-full px-4 py-3 rounded-xl text-xs text-white uppercase"
                 />
-                <span className="text-[8.5px] text-zinc-550 mt-1 block leading-normal">
-                  *บังคับระบุวันครบกำหนดที่ถูกต้องสำหรับช่วงเดือน {selectedMonth} เท่านั้น
-                </span>
               </div>
 
               <div className="flex items-center gap-2 p-2 bg-zinc-950/40 rounded-xl border border-zinc-900">
@@ -1670,8 +1675,6 @@ export default function OverviewPage() {
                 <input
                   type="date"
                   required
-                  min={dateInputMin}
-                  max={dateInputMax}
                   value={obDueDate}
                   onChange={(e) => setObDueDate(e.target.value)}
                   className="glass-input w-full px-4 py-3 rounded-xl text-xs text-white uppercase"

@@ -70,6 +70,23 @@ export default function ThemeToggle({ variant = 'button' }: { variant?: 'button'
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
 
+  // Sync theme-change across multiple components (desktop header vs profile page)
+  useEffect(() => {
+    const handleThemeChange = () => {
+      const currentTheme = readTheme()
+      setActiveTheme(currentTheme)
+    }
+    window.addEventListener('theme-change', handleThemeChange)
+    return () => window.removeEventListener('theme-change', handleThemeChange)
+  }, [])
+
+  const handleCycleTheme = () => {
+    const currentIndex = themes.findIndex(t => t.id === activeTheme)
+    const nextIndex = (currentIndex + 1) % themes.length
+    const nextTheme = themes[nextIndex].id
+    handleThemeSelect(nextTheme)
+  }
+
   const handleThemeSelect = (themeId: Theme) => {
     setActiveTheme(themeId)
     localStorage.setItem('theme', themeId)
@@ -163,56 +180,13 @@ export default function ThemeToggle({ variant = 'button' }: { variant?: 'button'
     <div className="relative inline-block text-left" ref={menuRef}>
       <button
         type="button"
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={handleCycleTheme}
         className="flex cursor-pointer items-center gap-2 rounded-xl border border-zinc-800/60 bg-zinc-950/10 p-2 text-zinc-400 shadow-inner transition-all duration-200 hover:scale-105 hover:bg-zinc-950/20 hover:text-zinc-200 active:scale-95 text-xs font-black select-none shrink-0"
-        aria-label="เลือกธีมหน้าจอ"
+        aria-label="สลับธีมหน้าจอ"
       >
         <Palette size={15} className="text-emerald-400 stroke-[2.5px]" />
         <span>{currentThemeInfo.emoji} {currentThemeInfo.name}</span>
       </button>
-
-      {isOpen && (
-        <div className="absolute right-0 bottom-full mb-2 w-48 overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-950/95 p-1.5 shadow-2xl backdrop-blur-xl animate-slide-up z-[9999] select-none">
-          <div className="px-2.5 py-1 text-[9px] font-black tracking-wider text-zinc-500 uppercase border-b border-zinc-900 mb-1">
-            เลือกโทนสีถนอมสายตา 🎨
-          </div>
-          <div className="space-y-0.5">
-            {themes.map((theme) => {
-              const isActive = theme.id === activeTheme
-              return (
-                <button
-                  key={theme.id}
-                  type="button"
-                  onClick={() => handleThemeSelect(theme.id)}
-                  className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-xl text-xs font-bold transition-all duration-150 cursor-pointer text-left ${
-                    isActive
-                      ? 'bg-emerald-500/10 text-emerald-400'
-                      : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/50'
-                  }`}
-                >
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm">{theme.emoji}</span>
-                    <span>{theme.name}</span>
-                  </div>
-                  
-                  <div className="flex items-center gap-1.5">
-                    <div className="flex -space-x-1 shrink-0">
-                      {theme.previewColors.map((color, idx) => (
-                        <span
-                          key={idx}
-                          className="w-2.5 h-2.5 rounded-full border border-zinc-950 shrink-0"
-                          style={{ backgroundColor: color }}
-                        />
-                      ))}
-                    </div>
-                    {isActive && <Check size={11} className="text-emerald-400 shrink-0" />}
-                  </div>
-                </button>
-              )
-            })}
-          </div>
-        </div>
-      )}
     </div>
   )
 }

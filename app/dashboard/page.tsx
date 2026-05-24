@@ -48,6 +48,7 @@ export default function Dashboard() {
 
   // Detailed Modal for viewing transaction details on click
   const [selectedTx, setSelectedTx] = useState<Transaction | null>(null)
+  const [showRecordTypeSelector, setShowRecordTypeSelector] = useState(false)
 
   const router = useRouter()
   const supabase = createClient()
@@ -374,7 +375,7 @@ export default function Dashboard() {
                 </p>
                 <button
                   type="button"
-                  onClick={handleOpenQuickModal}
+                  onClick={() => setShowRecordTypeSelector(true)}
                   className="mt-4 px-4 py-2 bg-emerald-500 text-black text-xs font-black rounded-xl hover:scale-105 active:scale-95 transition-all cursor-pointer"
                 >
                   + เริ่มบันทึกตอนนี้
@@ -525,6 +526,85 @@ export default function Dashboard() {
                   รายการนี้ไม่มีการแนบรูปภาพสลิปหลักฐาน
                 </div>
               )}
+            </div>
+
+          </div>
+        </div>
+      )}
+
+      {/* 3. Record Type Selection Modal for Empty State */}
+      {showRecordTypeSelector && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[9999] flex items-center justify-center p-4 animate-fade-in">
+          <div className="app-modal relative max-w-sm w-full bg-zinc-900 border border-zinc-850 rounded-3xl overflow-hidden shadow-2xl p-6 animate-scale-up">
+            
+            <div className="flex justify-between items-center mb-5 select-none">
+              <div>
+                <h4 className="text-xs font-black text-zinc-300 uppercase tracking-wider">เริ่มบันทึกรายการเงิน 🏠</h4>
+                <p className="text-[10px] text-zinc-550 mt-0.5">เลือกประเภทรายการที่คุณต้องการทำรายการ</p>
+              </div>
+              <button
+                onClick={() => setShowRecordTypeSelector(false)}
+                className="w-7 h-7 rounded-full bg-zinc-850 text-zinc-400 hover:text-white flex items-center justify-center hover:bg-zinc-800 cursor-pointer"
+              >
+                <X size={15} />
+              </button>
+            </div>
+
+            {/* Selection Grid */}
+            <div className="space-y-3">
+              {/* Expense Option */}
+              <button
+                type="button"
+                onClick={() => {
+                  window.dispatchEvent(new CustomEvent('open-transaction-modal', { detail: { type: 'expense' } }))
+                  setShowRecordTypeSelector(false)
+                }}
+                className="w-full flex items-center gap-3.5 p-3.5 bg-rose-500/10 hover:bg-rose-500/15 border border-rose-500/20 hover:border-rose-500/30 rounded-2xl transition-all cursor-pointer text-left group active:scale-98"
+              >
+                <div className="w-10 h-10 rounded-xl bg-rose-500/20 text-rose-455 flex items-center justify-center border border-rose-500/10 shrink-0 font-bold text-lg select-none">
+                  📉
+                </div>
+                <div>
+                  <span className="block text-xs font-black text-rose-400">บันทึกรายจ่าย</span>
+                  <span className="block text-[9.5px] text-zinc-500 font-bold mt-0.5">ป้อนรายการใช้จ่าย ค่าของใช้ หรือค่าอาหาร</span>
+                </div>
+              </button>
+
+              {/* Scan Slip Option */}
+              <button
+                type="button"
+                onClick={() => {
+                  window.dispatchEvent(new CustomEvent('open-scan-slip-modal'))
+                  setShowRecordTypeSelector(false)
+                }}
+                className="w-full flex items-center gap-3.5 p-3.5 bg-cyan-500/10 hover:bg-cyan-500/15 border border-cyan-500/20 hover:border-cyan-500/30 rounded-2xl transition-all cursor-pointer text-left group active:scale-98"
+              >
+                <div className="w-10 h-10 rounded-xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center border border-cyan-500/10 shrink-0 font-bold text-lg select-none">
+                  📷
+                </div>
+                <div>
+                  <span className="block text-xs font-black text-cyan-400">สแกนสลิปด้วย AI (Scan Slip)</span>
+                  <span className="block text-[9.5px] text-zinc-500 font-bold mt-0.5">อัปโหลดสลิปธนาคารเพื่อสแกนยอดเงินเข้าโดยอัตโนมัติ</span>
+                </div>
+              </button>
+
+              {/* Income Option */}
+              <button
+                type="button"
+                onClick={() => {
+                  window.dispatchEvent(new CustomEvent('open-transaction-modal', { detail: { type: 'income' } }))
+                  setShowRecordTypeSelector(false)
+                }}
+                className="w-full flex items-center gap-3.5 p-3.5 bg-emerald-500/10 hover:bg-emerald-500/15 border border-emerald-500/20 hover:border-emerald-500/30 rounded-2xl transition-all cursor-pointer text-left group active:scale-98"
+              >
+                <div className="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-450 flex items-center justify-center border border-emerald-500/10 shrink-0 font-bold text-lg select-none">
+                  📈
+                </div>
+                <div>
+                  <span className="block text-xs font-black text-emerald-400">บันทึกรายรับ</span>
+                  <span className="block text-[9.5px] text-zinc-500 font-bold mt-0.5">ป้อนข้อมูลรายได้สะสม รายวัน หรือเงินรับเข้าบ้าน</span>
+                </div>
+              </button>
             </div>
 
           </div>

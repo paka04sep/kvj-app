@@ -475,34 +475,27 @@ export default function ProfilePage() {
                   }`}
                 >
                   <Shield size={14} />
-                 สร้างบัญชีครอบครัว
+                  สร้างบัญชีครอบครัว
                 </button>
               )}
+              <button
+                onClick={() => router.push('/profile/members')}
+                className="w-full text-left px-4 py-3 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/40"
+              >
+                <User size={14} />
+                ดูสมาชิกครอบครัวในระบบ 👥
+              </button>
+              <button
+                onClick={() => router.push('/profile/notifications')}
+                className="w-full text-left px-4 py-3 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/40"
+              >
+                <Bell size={14} />
+                ตั้งค่าการแจ้งเตือน 🔔
+              </button>
             </div>
 
             {/* Theme Switch Panel */}
             <ThemeToggle variant="card" />
-
-            {/* Push Notification Enable Card */}
-            <button
-              onClick={async () => {
-                await registerPushNotifications();
-                if (Notification.permission === 'granted') {
-                  setPwSuccess('เปิดสิทธิ์การแจ้งเตือนสั่นและเด้งนอกแอปเรียบร้อยแล้ว! 🎉 คุณจะได้รับข้อความเด้งเตือนแม้ว่าจะปิดแอปไปแล้ว');
-                  confetti({
-                    particleCount: 50,
-                    spread: 40,
-                    origin: { y: 0.8 }
-                  });
-                } else {
-                  setPwError('กรุณากดยอมรับสิทธิ์แจ้งเตือนบนเบราว์เซอร์ของคุณเมื่อระบบถาม เพื่อเปิดระบบเด้งเตือนนอกแอป');
-                }
-              }}
-              className="w-full py-3.5 rounded-2xl bg-emerald-500/10 hover:bg-emerald-500/15 border border-emerald-500/20 hover:border-emerald-500/30 text-emerald-400 text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer select-none"
-            >
-              <Bell size={14} className="text-emerald-450 animate-pulse" />
-              เปิดรับแจ้งเตือนนอกแอป (สั่น/เด้งเตือน) 🔔
-            </button>
 
             {/* Logout Section */}
             <button

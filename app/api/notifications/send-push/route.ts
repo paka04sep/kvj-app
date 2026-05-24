@@ -42,6 +42,20 @@ export async function POST(req: Request) {
 
     const actorName = userNotification.actor_name || 'สมาชิกในบ้าน';
 
+    // Check recipient's notification preferences to respect their settings
+    const { data: recipientProfile, error: profileErr } = await supabase
+      .from('profiles')
+      .select('notification_settings')
+      .eq('id', userNotification.user_id)
+      .single();
+
+    if (!profileErr && recipientProfile && recipientProfile.notification_settings) {
+      const settings = recipientProfile.notification_settings as Record<string, boolean>;
+      if (settings[userNotification.action_type] === false) {
+        return NextResponse.json({ success: true, message: `Notification type ${userNotification.action_type} disabled by recipient` });
+      }
+    }
+
     // 3. Format wording using shared localizer engine
     const textInfo = getNotificationText(
       userNotification.action_type,
