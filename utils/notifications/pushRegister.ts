@@ -64,18 +64,17 @@ export async function registerPushNotifications() {
     const p256dhStr = btoa(String.fromCharCode.apply(null, Array.from(new Uint8Array(key))));
     const authStr = btoa(String.fromCharCode.apply(null, Array.from(new Uint8Array(auth))));
 
-    // 6. Upsert the subscription record linked to current user
-    const { error } = await supabase.from('push_subscriptions').upsert({
-      user_id: user.id,
-      endpoint: subscription.endpoint,
-      p256dh: p256dhStr,
-      auth: authStr
-    }, { onConflict: 'endpoint' });
+    // 6. Save the subscription record securely via RPC (bypasses direct client-side RLS conflicts)
+    const { error } = await supabase.rpc('save_push_subscription', {
+      p_endpoint: subscription.endpoint,
+      p_p256dh: p256dhStr,
+      p_auth: authStr
+    });
 
     if (error) {
-      console.error('Error saving push subscription to database:', error);
+      console.error('Error saving push subscription to database via RPC:', error);
     } else {
-      console.log('Web Push subscription registered successfully in Supabase!');
+      console.log('Web Push subscription registered successfully in Supabase via RPC!');
     }
 
   } catch (err) {

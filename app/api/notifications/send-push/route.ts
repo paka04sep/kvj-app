@@ -50,7 +50,10 @@ export async function POST(req: Request) {
       .single();
 
     if (!profileErr && recipientProfile && recipientProfile.notification_settings) {
-      const settings = recipientProfile.notification_settings as Record<string, boolean>;
+      const settings = recipientProfile.notification_settings as Record<string, any>;
+      if (settings.enabled === false) {
+        return NextResponse.json({ success: true, message: `Notifications are globally disabled by recipient` });
+      }
       if (settings[userNotification.action_type] === false) {
         return NextResponse.json({ success: true, message: `Notification type ${userNotification.action_type} disabled by recipient` });
       }

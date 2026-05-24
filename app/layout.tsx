@@ -5,7 +5,6 @@ import DesktopHeader from '@/components/DesktopHeader'
 import QuickTransactionModal from '@/components/QuickTransactionModal'
 import ScanSlipModal from '@/components/ScanSlipModal'
 import { NotificationProvider } from '@/components/NotificationContext'
-import NotificationToastContainer from '@/components/NotificationToastContainer'
 import SplashScreen from '@/components/SplashScreen'
 import './globals.css'
 
@@ -141,7 +140,6 @@ export default function RootLayout({
 
           <QuickTransactionModal />
           <ScanSlipModal />
-          <NotificationToastContainer />
         </NotificationProvider>
 
         <script

@@ -4,7 +4,6 @@ import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import DesktopNav from '@/components/DesktopNav'
 import ThemeToggle from '@/components/ThemeToggle'
-import NotificationBell from '@/components/NotificationBell'
 
 export default function DesktopHeader() {
   const pathname = usePathname()
@@ -30,7 +29,6 @@ export default function DesktopHeader() {
       <DesktopNav />
 
       <div className="flex shrink-0 items-center gap-3">
-        <NotificationBell />
         <ThemeToggle />
         <div className="h-5 w-px bg-zinc-800/60" />
         <span className="select-none text-[10px] font-medium text-zinc-500">

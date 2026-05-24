@@ -38,11 +38,26 @@ export async function GET(req: Request) {
     }
 
     if (!subscriptions || subscriptions.length === 0) {
+      // Fetch profiles in this database to help identify user ID / database mismatches
+      const { data: dbProfiles } = await supabase
+        .from('profiles')
+        .select('id, display_name');
+
+      const isUserInDb = dbProfiles && dbProfiles.some((p: any) => p.id === userId);
+
       return NextResponse.json({
         success: false,
         message: 'No push subscriptions found for this user in public.push_subscriptions table.',
         userId,
-        guidance: 'Make sure you have allowed notifications in your mobile browser and installed the PWA onto your Home Screen!'
+        guidance: 'Make sure you have allowed notifications in your mobile browser and installed the PWA onto your Home Screen!',
+        database_diagnosis: {
+          connected_supabase_url: process.env.NEXT_PUBLIC_SUPABASE_URL || 'MISSING',
+          requested_user_exists_in_this_db: isUserInDb ? 'YES' : 'NO (User ID not found in this database profiles table!)',
+          active_profiles_in_this_db: dbProfiles || [],
+          developer_advice: isUserInDb
+            ? 'The user exists in the database but hasn\'t allowed browser push permissions or logged into the PWA. Open the PWA on your home screen, log in, and grant notifications permission.'
+            : 'You are attempting to test a User ID that does not exist in this database connection. Verify if you are testing the Dev vs Prod server, or ensure you are using a correct User ID from the list above.'
+        }
       });
     }
 
