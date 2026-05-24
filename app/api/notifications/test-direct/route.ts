@@ -87,6 +87,7 @@ export async function GET(req: Request) {
 
     return NextResponse.json({
       success: true,
+      supabase_url: process.env.NEXT_PUBLIC_SUPABASE_URL || 'MISSING',
       vapid_public_key: process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY ? 'CONFIGURED' : 'MISSING',
       vapid_private_key: process.env.VAPID_PRIVATE_KEY ? 'CONFIGURED' : 'MISSING',
       webhook_secret_token: process.env.WEBHOOK_SECRET_TOKEN ? 'CONFIGURED' : 'MISSING',
