@@ -1539,12 +1539,6 @@ export default function OverviewPage() {
               <h3 className="text-xs font-black text-zinc-200 tracking-wider uppercase flex items-center gap-1">
                 ✏️ แก้ไขข้อมูลภาระบิลของบ้าน
               </h3>
-              <button 
-                onClick={() => setShowEditModal(false)}
-                className="text-zinc-500 hover:text-zinc-300 font-bold cursor-pointer text-xs p-1"
-              >
-                ปิด
-              </button>
             </div>
             
             <form onSubmit={handleEditObligation} className="space-y-4.5 mt-5">

@@ -5,7 +5,8 @@ export type NotificationType =
   | 'settlement_created'
   | 'obligation_created'
   | 'obligation_paid'
-  | 'savings_goal_updated';
+  | 'savings_goal_updated'
+  | 'auto_system_reminder';
 
 export interface NotificationMetadata {
   amount?: number;
@@ -120,6 +121,15 @@ export const getNotificationText = (
         body: `${name} ได้ปรับเป้าหมายการออมประจำเดือน ${formatThaiMonth(metadata.month)} เป็น ฿${formattedAmount}`,
         icon: '🏆',
         theme: 'amber'
+      };
+    }
+
+    case 'auto_system_reminder': {
+      return {
+        title: metadata.category || '🔔 แจ้งเตือนระบบ',
+        body: metadata.description || '',
+        icon: metadata.receiver_name || '🤖',
+        theme: (metadata.type as any) || 'amber'
       };
     }
 

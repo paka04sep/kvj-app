@@ -18,11 +18,13 @@ interface Profile {
   role: string
   avatar_url: string | null
   created_at: string
+  notification_settings?: any
 }
 
 export default function ProfilePage() {
   const [loading, setLoading] = useState(true)
   const [profile, setProfile] = useState<Profile | null>(null)
+  const [isNotificationsEnabled, setIsNotificationsEnabled] = useState(true)
   const [activeSection, setActiveSection] = useState<'profile' | 'security' | 'admin'>('profile')
   
   // Password change states
@@ -86,6 +88,8 @@ export default function ProfilePage() {
         if (data) {
           setProfile(data)
           setDisplayNameInput(data.display_name)
+          const settings = data.notification_settings as any
+          setIsNotificationsEnabled(settings?.enabled !== false)
         }
       } catch (err) {
         console.error(err)
@@ -147,6 +151,39 @@ export default function ProfilePage() {
       setPwError(err.message || 'เกิดข้อผิดพลาดในการอัปเดตชื่อ')
     } finally {
       setUpdatingName(false)
+    }
+  }
+
+  // Handle Notification Toggle in Profile
+  const handleToggleNotifications = async () => {
+    if (!profile) return
+    const nextVal = !isNotificationsEnabled
+    setIsNotificationsEnabled(nextVal)
+
+    try {
+      const updatedSettings = {
+        ...(profile.notification_settings || {}),
+        enabled: nextVal
+      }
+
+      const { error } = await supabase
+        .from('profiles')
+        .update({ notification_settings: updatedSettings })
+        .eq('id', profile.id)
+
+      if (error) throw error
+
+      setProfile({
+        ...profile,
+        notification_settings: updatedSettings
+      })
+      setPwSuccess(nextVal ? 'เปิดการแจ้งเตือนระบบเรียบร้อยแล้ว! 🔔' : 'ปิดการแจ้งเตือนระบบชั่วคราวแล้ว 🔕')
+      setTimeout(() => setPwSuccess(null), 3000)
+    } catch (err) {
+      console.error('Error toggling notifications:', err)
+      setIsNotificationsEnabled(isNotificationsEnabled) // Revert state on error
+      setPwError('เกิดข้อผิดพลาดในการบันทึกการตั้งค่า')
+      setTimeout(() => setPwError(null), 3000)
     }
   }
 
@@ -483,19 +520,36 @@ export default function ProfilePage() {
                 className="w-full text-left px-4 py-3 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/40"
               >
                 <User size={14} />
-                ดูสมาชิกครอบครัวในระบบ 👥
-              </button>
-              <button
-                onClick={() => router.push('/profile/notifications')}
-                className="w-full text-left px-4 py-3 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/40"
-              >
-                <Bell size={14} />
-                ตั้งค่าการแจ้งเตือน 🔔
+                ดูสมาชิกครอบครัวในระบบ 
               </button>
             </div>
 
             {/* Theme Switch Panel */}
             <ThemeToggle variant="card" />
+
+            {/* Single Notification Switch Toggle Card */}
+            <div className="w-full glass-card rounded-2xl p-4.5 border border-zinc-800/80 shadow-md flex items-center justify-between text-left select-none">
+              <div className="flex items-center gap-2 text-zinc-400 text-xs font-black pl-1">
+                <Bell size={15} className="text-emerald-400 shrink-0" />
+                <span>การแจ้งเตือนระบบ</span>
+              </div>
+              <button
+                type="button"
+                onClick={handleToggleNotifications}
+                className={`relative inline-flex h-5.5 w-10.5 shrink-0 cursor-pointer rounded-full border border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                  isNotificationsEnabled ? 'bg-emerald-500' : 'bg-zinc-800'
+                }`}
+                role="switch"
+                aria-checked={isNotificationsEnabled}
+              >
+                <span
+                  aria-hidden="true"
+                  className={`pointer-events-none inline-block h-4.5 w-4.5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${
+                    isNotificationsEnabled ? 'translate-x-5' : 'translate-x-0'
+                  }`}
+                />
+              </button>
+            </div>
 
             {/* Logout Section */}
             <button
