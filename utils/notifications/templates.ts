@@ -57,7 +57,7 @@ export const getNotificationText = (
       const formattedAmount = metadata.amount ? Number(metadata.amount).toLocaleString() : '0';
       const cat = metadata.category ? metadata.category.split(' ').pop() : 'ไม่ระบุหมวดหมู่';
       return {
-        title: isIncome ? '💸 มีรายรับใหม่เข้ามา!' : '🛒 บันทึกรายจ่ายใหม่',
+        title: isIncome ? '💸 มีรายรับเข้าบ้านจ้าาา' : '🛒 บันทึกรายจ่ายใหม่',
         body: `${name} ได้บันทึก "${metadata.description}" จำนวน ฿${formattedAmount} ในหมวด [${cat}]`,
         icon: isIncome ? '📈' : '📉',
         theme: isIncome ? 'emerald' : 'rose'

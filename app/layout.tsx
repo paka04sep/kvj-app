@@ -42,8 +42,8 @@ export default function RootLayout({
   return (
     <html lang="th" className={`${prompt.variable} h-full antialiased`} suppressHydrationWarning>
       <head>
-        <link rel="apple-touch-icon" href="/main_icon_192x192.png" />
-        <link rel="apple-touch-startup-image" href="/main_icon_512x512.png" />
+        <link rel="apple-touch-icon" href="/icon.svg" />
+        <link rel="apple-touch-startup-image" href="/icon.svg" />
         <style
           dangerouslySetInnerHTML={{
             __html: `
@@ -87,33 +87,13 @@ export default function RootLayout({
                 gap: 20px;
                 z-index: 10;
               }
-              #kvj-static-splash-logo {
-                position: relative;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                width: 80px;
-                height: 80px;
-                border-radius: 9999px;
-                background-color: #18181b;
-                border: 1px solid #27272a;
-                box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-              }
               #kvj-static-splash-img {
-                width: 48px;
-                height: 48px;
+                width: 120px;
+                height: 120px;
                 object-fit: contain;
                 aspect-ratio: 1 / 1;
                 flex-shrink: 0;
-              }
-              #kvj-static-splash-title {
-                font-size: 24px;
-                font-weight: 950;
-                letter-spacing: 0.25em;
-                color: #ffffff;
-                margin: 0;
-                padding-left: 0.25em;
-                text-shadow: 0 0 12px rgba(16,185,129,0.25);
+                filter: drop-shadow(0 10px 30px rgba(0,0,0,0.5));
               }
             `,
           }}

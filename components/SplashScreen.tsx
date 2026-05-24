@@ -46,10 +46,7 @@ export default function SplashScreen() {
     >
       <div id="kvj-static-splash-blur" />
       <div id="kvj-static-splash-container">
-        <div id="kvj-static-splash-logo">
-          <img id="kvj-static-splash-img" src="/main_icon_192x192.png" alt="Logo" />
-        </div>
-        <h1 id="kvj-static-splash-title">KVJ FAMILY</h1>
+        <img id="kvj-static-splash-img" src="/icon.svg" alt="Logo" />
       </div>
     </div>
   )
