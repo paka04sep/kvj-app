@@ -125,7 +125,7 @@ export const getNotificationText = (
 
     case 'auto_system_reminder': {
       return {
-        title: `[KVJ FAMILY] ${metadata.category || 'แจ้งเตือนระบบ'}`,
+        title: `${metadata.category || 'แจ้งเตือนระบบ'}`,
         body: metadata.description || '',
         icon: metadata.receiver_name || '🤖',
         theme: (metadata.type as any) || 'amber'
@@ -134,7 +134,7 @@ export const getNotificationText = (
 
     default:
       return {
-        title: '[KVJ FAMILY] กิจกรรมใหม่ในครอบครัว',
+        title: 'กิจกรรมใหม่ในครอบครัว',
         body: `${name} - อัปเดตระบบการเงินของบ้าน`,
         icon: '🏡',
         theme: 'blue'
