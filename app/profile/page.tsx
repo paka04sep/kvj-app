@@ -31,8 +31,15 @@ export default function ProfilePage() {
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      setPushStatus(localStorage.getItem('kvj_push_registration_status'))
-      setPushError(localStorage.getItem('kvj_push_registration_error'))
+      const status = localStorage.getItem('kvj_push_registration_status')
+      const error = localStorage.getItem('kvj_push_registration_error')
+      setPushStatus(status)
+      setPushError(error)
+      console.log('--- KVJ Push Notification Test Info ---')
+      console.log('Browser notification permission status:', Notification.permission)
+      console.log('KVJ Local Push Status:', status)
+      if (error) console.log('KVJ Local Push Error:', error)
+      console.log('---------------------------------------')
     }
   }, [])
   
@@ -468,18 +475,18 @@ export default function ProfilePage() {
           </div>
         )}
 
-        {/* Feedback Alerts */}
+        {/* Feedback Alerts as Floating Toasts */}
         {pwSuccess && (
-          <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm flex items-start gap-2.5 animate-slide-up max-w-4xl">
-            <CheckCircle size={18} className="shrink-0 mt-0.5" />
-            <span>{pwSuccess}</span>
+          <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-[9999] w-[90%] max-w-sm p-4 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-xs flex items-center gap-2.5 animate-slide-up shadow-2xl backdrop-blur-md">
+            <CheckCircle size={16} className="shrink-0" />
+            <span className="font-extrabold">{pwSuccess}</span>
           </div>
         )}
 
         {pwError && (
-          <div className="p-4 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-sm flex items-start gap-2.5 animate-slide-up max-w-4xl">
-            <AlertCircle size={18} className="shrink-0 mt-0.5" />
-            <span>{pwError}</span>
+          <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-[9999] w-[90%] max-w-sm p-4 rounded-2xl bg-rose-500/15 border border-rose-500/30 text-rose-400 text-xs flex items-center gap-2.5 animate-slide-up shadow-2xl backdrop-blur-md">
+            <AlertCircle size={16} className="shrink-0" />
+            <span className="font-extrabold">{pwError}</span>
           </div>
         )}
 
@@ -559,26 +566,6 @@ export default function ProfilePage() {
                     }`}
                   />
                 </button>
-              </div>
-
-              {/* PWA Push Notification Status Display */}
-              <div className="border-t border-zinc-800/60 pt-3 space-y-1.5 pl-1">
-                <div className="flex items-center gap-2">
-                  <span className="text-[10px] text-zinc-500 font-bold">สถานะสิทธิ์บนเครื่องนี้:</span>
-                  {pushStatus === 'success' ? (
-                    <span className="text-[9px] bg-emerald-500/10 text-emerald-400 px-1.5 py-0.5 rounded font-black">เปิดสำเร็จ 🟢</span>
-                  ) : pushStatus === 'failed' ? (
-                    <span className="text-[9px] bg-rose-500/10 text-rose-400 px-1.5 py-0.5 rounded font-black">สมัครล้มเหลว 🔴</span>
-                  ) : (
-                    <span className="text-[9px] bg-zinc-800 text-zinc-400 px-1.5 py-0.5 rounded font-black">รอดำเนินการ / สแกนสิทธิ์ ⏳</span>
-                  )}
-                </div>
-                {pushError && (
-                  <div className="text-[9px] text-rose-400 leading-relaxed font-semibold bg-rose-950/20 border border-rose-900/30 p-2.5 rounded-xl mt-1 select-text">
-                    <p className="font-bold text-[10px] text-rose-300 mb-0.5">⚠️ ข้อความวิเคราะห์ความผิดพลาด:</p>
-                    <p>{pushError}</p>
-                  </div>
-                )}
               </div>
             </div>
 

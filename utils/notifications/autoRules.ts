@@ -7,9 +7,9 @@ export const AUTO_NOTIFICATION_CONFIG = {
   recordReminder: {
     enabled: true,
     // Times of the day to check and trigger reminders (HH:MM in local time)
-    times: ['12:00', '18:00', '21:00'],
+    times: ['12:00', '18:00', '22:00'],
     title: '📝 วันนี้บันทึกหรือยังนะ?',
-    body: 'วันนี้คุณบันทึกรายรับ-รายจ่ายของบ้านแล้วรึยัง?? อย่าลืมสะสมข้อมูลความรักและความอบอุ่นการเงินนะ 💖',
+    body: 'วันนี้บันทึกรายรับ-รายจ่ายของบ้านแล้วรึยัง??',
     icon: '📝',
     theme: 'amber' as 'emerald' | 'rose' | 'amber' | 'blue',
   },
@@ -18,9 +18,9 @@ export const AUTO_NOTIFICATION_CONFIG = {
   noIncomeReminder: {
     enabled: true,
     // Times of the day to check (HH:MM in local time)
-    times: ['13:00', '19:00', '21:30'],
+    times: ['18:00', '22:30'], 
     title: '🏠 วันนี้ยังไม่มีรายรับเลย',
-    body: 'วันนี้ยังไม่มีรายรับเข้าบ้านเลยนะ สู้ๆ นะคะทุกคน! มาร่วมมือรันบ้านของเรากันนะ 💪💵',
+    body: 'วันนี้ยังไม่มีรายรับเข้าบ้านเลยครับ 😞',
     icon: '💸',
     theme: 'rose' as 'emerald' | 'rose' | 'amber' | 'blue',
   },
@@ -37,9 +37,9 @@ export const AUTO_NOTIFICATION_CONFIG = {
     getBody: (billName: string, daysLeft: number, amount: number) => {
       const formattedAmount = Number(amount).toLocaleString('th-TH');
       if (daysLeft === 1) {
-        return `บิล "${billName}" ยอด ฿${formattedAmount} จะครบกำหนดชำระ *วันพรุ่งนี้แล้วนะ*! คุณชำระแล้วรึยังคะ? ⏰`;
-      }
-      return `อีก ${daysLeft} วัน จะถึงกำหนดชำระบิล "${billName}" ยอด ฿${formattedAmount} ชำระเรียบร้อยรึยังเอ่ย? 💸`;
+        return `บิล "${billName}" ยอด ฿${formattedAmount} จะครบกำหนดชำระ *วันพรุ่งนี้แล้วนะ*! ยังไม่ได้ชำระเลยครับ!? ⏰`;
+      } 
+      return `อีก ${daysLeft} วัน จะถึงกำหนดชำระบิล "${billName}" ยอด ฿${formattedAmount} ชำระเรียบร้อยรึยังครับ? 💸`;
     },
     icon: '🔔',
     theme: 'blue' as 'emerald' | 'rose' | 'amber' | 'blue',

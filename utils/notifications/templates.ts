@@ -54,71 +54,70 @@ export const getNotificationText = (
   switch (actionType) {
     case 'transaction_created': {
       const isIncome = metadata.type === 'income';
-      const formattedAmount = metadata.amount ? Number(metadata.amount).toLocaleString() : '0';
-      const cat = metadata.category ? metadata.category.split(' ').pop() : 'ไม่ระบุหมวดหมู่';
+      const formattedAmount = metadata.amount ? Number(metadata.amount).toLocaleString(undefined, { minimumFractionDigits: 2 }) : '0.00';
       return {
-        title: isIncome ? '💸 มีรายรับเข้าบ้านจ้าาา' : '🛒 บันทึกรายจ่ายใหม่',
-        body: `${name} ได้บันทึก "${metadata.description}" จำนวน ฿${formattedAmount} ในหมวด [${cat}]`,
-        icon: isIncome ? '📈' : '📉',
+        title: isIncome ? '💰 มีรายรับเข้าบ้านแล้วคร้าบบ' : '💸 มีรายจ่ายอีกแล้วคร้าบบ!',
+        body: `${name} บันทึก${isIncome ? 'รายรับ' : 'รายจ่าย'}\n"${metadata.description}" จำนวนเงิน ฿${formattedAmount}`,
+        icon: isIncome ? '📈' : '📉', 
         theme: isIncome ? 'emerald' : 'rose'
-      };
+      }; 
     }
 
     case 'transaction_updated': {
-      const formattedAmount = metadata.amount ? Number(metadata.amount).toLocaleString() : '0';
+      const formattedAmount = metadata.amount ? Number(metadata.amount).toLocaleString(undefined, { minimumFractionDigits: 2 }) : '0.00';
       return {
-        title: '✏️ มีการแก้ไขรายการเงิน',
-        body: `${name} ได้แก้ไขรายการเป็น "${metadata.description}" ยอดใหม่ ฿${formattedAmount}`,
+        title: '📝 แก้ไขรายการ',
+        body: `${name} แก้ไขรายการ\n"${metadata.description}" จำนวนเงิน ฿${formattedAmount}`,
         icon: '📝',
         theme: 'amber'
       };
     }
 
     case 'transaction_deleted': {
-      const formattedAmount = metadata.amount ? Number(metadata.amount).toLocaleString() : '0';
+      const formattedAmount = metadata.amount ? Number(metadata.amount).toLocaleString(undefined, { minimumFractionDigits: 2 }) : '0.00';
       return {
-        title: '🗑️ รายการเงินถูกลบออก',
-        body: `${name} ได้ลบรายการ "${metadata.description}" ยอด ฿${formattedAmount}`,
+        title: '🗑️ ลบรายการ',
+        body: `${name} ลบรายการ\n"${metadata.description}" จำนวนเงิน ฿${formattedAmount}`,
         icon: '⚠️',
         theme: 'rose'
       };
     }
 
     case 'settlement_created': {
-      const formattedAmount = metadata.amount ? Number(metadata.amount).toLocaleString() : '0';
+      const formattedAmount = metadata.amount ? Number(metadata.amount).toLocaleString(undefined, { minimumFractionDigits: 2 }) : '0.00';
       return {
-        title: '🤝 คืนเงินเรียบร้อย',
-        body: `${name} ได้โอนเงินคืนให้ ${metadata.receiver_name || 'สมาชิกในบ้าน'} จำนวน ฿${formattedAmount}`,
+        title: 'คืนเงิน',
+        body: `${name} โอนเงินคืนให้ ${metadata.receiver_name || 'สมาชิกในบ้าน'}\n"โอนคืนเรียบร้อย" ฿${formattedAmount}`,
         icon: '✅',
         theme: 'emerald'
       };
     }
 
     case 'obligation_created': {
-      const formattedAmount = metadata.amount ? Number(metadata.amount).toLocaleString() : '0';
+      const formattedAmount = metadata.amount ? Number(metadata.amount).toLocaleString(undefined, { minimumFractionDigits: 2 }) : '0.00';
       return {
-        title: '📌 เพิ่มบิลค่าใช้จ่ายใหม่',
-        body: `มีรายการเรียกเก็บเงินค่า "${metadata.description}" ยอดเงิน ฿${formattedAmount}`,
+        title: '📌 มีบิลที่ต้องชำระเพิ่มครับบ!',
+        body: `${name} เพิ่มบิลใหม่\n"${metadata.description}" จำนวนเงิน ฿${formattedAmount}`,
         icon: '📅',
-        theme: 'blue'
+        theme: 'blue' 
       };
     }
 
     case 'obligation_paid': {
-      const formattedAmount = metadata.amount ? Number(metadata.amount).toLocaleString() : '0';
+      const formattedAmount = metadata.amount ? Number(metadata.amount).toLocaleString(undefined, { minimumFractionDigits: 2 }) : '0.00';
       return {
-        title: '🎉 ชำระบิลเรียบร้อย!',
-        body: `${name} ได้ทำการชำระค่าบิล "${metadata.description}" จำนวน ฿${formattedAmount} แล้ว`,
+        title: '💖 ชำระบิลประจำเดือนแล้วครับบ',
+        body: `${name} ชำระค่าบิล\n"${metadata.description}" จำนวนเงิน ฿${formattedAmount}`,
         icon: '💖',
         theme: 'emerald'
       };
     }
 
     case 'savings_goal_updated': {
-      const formattedAmount = metadata.target_amount ? Number(metadata.target_amount).toLocaleString() : '0';
+      const formattedAmount = metadata.target_amount ? Number(metadata.target_amount).toLocaleString(undefined, { minimumFractionDigits: 2 }) : '0.00';
       return {
-        title: '🎯 ปรับเป้าหมายการออม',
-        body: `${name} ได้ปรับเป้าหมายการออมประจำเดือน ${formatThaiMonth(metadata.month)} เป็น ฿${formattedAmount}`,
+        title: 'ปรับเป้าหมายการออม',
+        body: `${name} ปรับเป้าหมายการออม\n"ประจำเดือน ${formatThaiMonth(metadata.month)}" จำนวนเงิน ฿${formattedAmount}`,
         icon: '🏆',
         theme: 'amber'
       };
@@ -126,7 +125,7 @@ export const getNotificationText = (
 
     case 'auto_system_reminder': {
       return {
-        title: metadata.category || '🔔 แจ้งเตือนระบบ',
+        title: `[KVJ FAMILY] ${metadata.category || 'แจ้งเตือนระบบ'}`,
         body: metadata.description || '',
         icon: metadata.receiver_name || '🤖',
         theme: (metadata.type as any) || 'amber'
@@ -135,8 +134,8 @@ export const getNotificationText = (
 
     default:
       return {
-        title: '🔔 กิจกรรมใหม่ในครอบครัว',
-        body: `${name} ได้ทำรายการอัปเดตระบบการเงินของบ้าน`,
+        title: '[KVJ FAMILY] กิจกรรมใหม่ในครอบครัว',
+        body: `${name} - อัปเดตระบบการเงินของบ้าน`,
         icon: '🏡',
         theme: 'blue'
       };

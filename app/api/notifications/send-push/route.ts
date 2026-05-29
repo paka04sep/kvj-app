@@ -43,18 +43,14 @@ export async function POST(req: Request) {
     const actorName = userNotification.actor_name || 'สมาชิกในบ้าน';
 
     // Check recipient's notification preferences to respect their settings
-    const { data: recipientProfile, error: profileErr } = await supabase
-      .from('profiles')
-      .select('notification_settings')
-      .eq('id', userNotification.user_id)
-      .single();
-
-    if (!profileErr && recipientProfile && recipientProfile.notification_settings) {
-      const settings = recipientProfile.notification_settings as Record<string, any>;
+    if (userNotification.notification_settings) {
+      const settings = userNotification.notification_settings as Record<string, any>;
       if (settings.enabled === false) {
+        console.log(`[Push Notification] Global notifications disabled by recipient: ${userNotification.user_id}`);
         return NextResponse.json({ success: true, message: `Notifications are globally disabled by recipient` });
       }
       if (settings[userNotification.action_type] === false) {
+        console.log(`[Push Notification] Notification type ${userNotification.action_type} disabled by recipient: ${userNotification.user_id}`);
         return NextResponse.json({ success: true, message: `Notification type ${userNotification.action_type} disabled by recipient` });
       }
     }

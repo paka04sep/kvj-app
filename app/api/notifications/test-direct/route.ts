@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import webpush from 'web-push'
 import { createClient } from '@supabase/supabase-js'
+import { getNotificationText } from '@/utils/notifications/templates'
 
 // Configure web-push with VAPID keys
 webpush.setVapidDetails(
@@ -19,6 +20,7 @@ export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
     const userId = searchParams.get('userId');
+    const templateParam = searchParams.get('template') || 'transaction_created';
 
     if (!userId) {
       return NextResponse.json({ 
@@ -69,11 +71,54 @@ export async function GET(req: Request) {
         }
       };
 
+      let textInfo;
+      if (templateParam === 'obligation_paid') {
+        textInfo = getNotificationText('obligation_paid', 'แม่', {
+          amount: 850,
+          description: 'ค่าไฟเดือนพฤษภาคม'
+        });
+      }  else if (templateParam === 'obligation_created') {
+        textInfo = getNotificationText('obligation_created', 'แม่', {
+          amount: 850,
+         description: 'ค่าไฟเดือนพฤษภาคม'
+        });
+      } else if (templateParam === 'settlement_created') {
+        textInfo = getNotificationText('settlement_created', 'แม่', {
+          amount: 250,
+          receiver_name: 'คุณแม่'
+        });
+      } else if (templateParam === 'transaction_created_income' || templateParam === 'income') {
+        textInfo = getNotificationText('transaction_created', 'แม่', {
+          type: 'income',
+          amount: 2500,
+          description: 'วันนี้มีรายได้เข้าบ้าน',
+          category: 'รายได้รายวัน'
+        });
+      } else if (templateParam === 'transaction_updated' || templateParam === 'update') {
+        textInfo = getNotificationText('transaction_updated', 'คุณแม่', {
+          amount: 180,
+          description: 'ซื้อของกินจากร้านสะดวกซื้อ (แก้ไขยอด)'
+        });
+      } else if (templateParam === 'transaction_deleted' || templateParam === 'delete') {
+        textInfo = getNotificationText('transaction_deleted', 'คุณแม่', {
+          amount: 150,
+          description: 'ซื้อของกินจากร้านสะดวกซื้อ'
+        });
+      } else {
+        // Default to transaction_created (expense)
+        textInfo = getNotificationText('transaction_created', 'แม่', {
+          type: 'expense',
+          amount: 150,
+          description: 'จ่ายตลาด',
+          category: 'ค่าข้าว'
+        });
+      }
+
       const payload = JSON.stringify({
-        title: '🔴 KVJ Push Diagnosis',
-        body: 'This is a raw direct-endpoint Web Push test!',
-        icon: '/icon-192.png',
-        url: '/dashboard'
+        title: textInfo.title,
+        body: textInfo.body,
+        icon: textInfo.icon || '/icon-192.png',
+        url: '/transactions'
       });
 
       try {

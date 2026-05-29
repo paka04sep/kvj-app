@@ -134,7 +134,7 @@ export default function QuickTransactionModal() {
         setDescription(customEvent.detail.description)
       } else {
         const defaultDescriptions: Record<string, string> = {
-          'รายได้รายวัน': 'วันนี้มีรายได้รายวันเข้าบ้าน',
+          'รายได้รายวัน': 'วันนี้มีรายได้เข้าบ้าน',
           'รายได้เสริม': 'วันนี้มีรายได้เสริมเข้าบ้าน',
           'อื่นๆ_income': 'รายรับของครอบครัว',
           'ค่าข้าว': 'จ่ายค่าข้าว',
@@ -197,7 +197,7 @@ export default function QuickTransactionModal() {
     if (!category) return
 
     const defaultDescriptions: Record<string, string> = {
-      'รายได้รายวัน': 'วันนี้มีรายได้รายวันเข้าบ้าน',
+      'รายได้รายวัน': 'วันนี้มีรายได้เข้าบ้าน',
       'รายได้เสริม': 'วันนี้มีรายได้เสริมเข้าบ้าน',
       'อื่นๆ_income': 'รายรับของครอบครัว',
       'ค่าข้าว': 'จ่ายค่าข้าว',
